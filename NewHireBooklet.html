@@ -220,9 +220,10 @@
             color: #1f2937;
             transform: rotateY(180deg);
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.8rem; /* REDUCED FONT SIZE */
             font-weight: 500;
             border: 2px solid #93c5fd;
+            padding: 0.75rem; /* REDUCED PADDING */
         }
 
         /* Modal and Game Styles (Kept functional but clean) */
@@ -384,7 +385,7 @@
         <!-- Main Slide Area -->
         <div id="slides-wrapper" class="slides-wrapper">
 
-            <!-- SLIDE 0: Welcome (Content Swapped back to be the start) -->
+            <!-- SLIDE 0: Welcome -->
             <div id="slide-0" class="slide active-slide">
                 <div class="slide-content text-center pt-20">
                     <h1 class="text-4xl font-extrabold text-indigo-700 mb-4">Welcome to the Team!</h1>
@@ -781,7 +782,7 @@
                 </div>
             </div>
 
-            <!-- SLIDE 16: End Slide (Content Swapped back to be the end) -->
+            <!-- SLIDE 16: End Slide -->
             <div id="slide-16" class="slide">
                 <div class="slide-content text-center pt-20">
                     <h1 class="text-4xl font-extrabold text-indigo-700 mb-4">Congratulations, You've Completed the Orientation!</h1>
@@ -823,10 +824,10 @@
         // --- Core Values Scenario Elements ---
         const generateScenarioBtn = document.getElementById('generate-scenario-btn');
         const scenarioText = document.getElementById('scenario-text');
-        const scenarioLoader = document.getElementById('scenario-loader');
         const answerArea = document.getElementById('answer-area');
         const revealAnswerBtn = document.getElementById('reveal-answer-btn');
         const answerText = document.getElementById('answer-text');
+        let currentAnswer = ""; // Moved outside to be accessible
 
         // --- Systems Matching Game Elements ---
         const matchGameGrid = document.getElementById('match-grid');
@@ -994,14 +995,15 @@
         }
         
         // --- Core Values Scenario Logic (NO LLM CALL) ---
-
-        let currentAnswer = "";
         
         function generateCoreValueScenario() {
-            scenarioLoader.classList.remove('hidden');
+            // Check if scenarioLoader exists (it was removed in a previous step, so we use scenarioText to display loading status if necessary)
+            
             generateScenarioBtn.disabled = true;
+            scenarioText.textContent = "Generating scenario..."; // Placeholder for loading
             answerArea.classList.add('hidden');
-            revealAnswerBtn.classList.add('hidden');
+            revealAnswerBtn.disabled = false; // Reset reveal button state
+            revealAnswerBtn.classList.remove('hidden');
             answerText.classList.add('hidden');
             answerText.textContent = ''; // Clear previous answer
 
@@ -1016,7 +1018,7 @@
                     answer: "Humbly Confident"
                 },
                 {
-                    scenario: "During a challenging state survey, the Infection Control specialist discovers a flaw in the documentation process. They quickly develop a simple, temporary solution to fix the immediate issue and document a long-term fix for the department to implement later.",
+                    scenario: "During a challenging state survey (SNF/ALF/LTACH), the Infection Control specialist discovers a flaw in the documentation process. They quickly develop a simple, temporary solution to fix the immediate issue and document a long-term fix for the department to implement later.",
                     answer: "Solution Focused"
                 },
                 {
@@ -1029,12 +1031,11 @@
             
             setTimeout(() => {
                 scenarioText.textContent = data.scenario;
-                currentAnswer = data.answer;
+                currentAnswer = data.answer; // Update the globally scoped currentAnswer
                 
                 answerArea.classList.remove('hidden');
                 revealAnswerBtn.classList.remove('hidden');
                 
-                scenarioLoader.classList.add('hidden');
                 generateScenarioBtn.disabled = false;
             }, 500); // Simulate network delay
         }
@@ -1232,8 +1233,8 @@
             
             // Re-apply event listeners for buttons that might be hidden initially
             
-            if(document.getElementById('generate-scenario-btn')) {
-                 document.getElementById('generate-scenario-btn').onclick = generateCoreValueScenario;
+            if(generateScenarioBtn) {
+                 generateScenarioBtn.onclick = generateCoreValueScenario;
             }
             
             // Set up link actions for mailto and internal alerts
@@ -1262,4 +1263,5 @@
     </script>
 </body>
 </html>
+
 
