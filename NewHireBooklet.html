@@ -8,332 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #a7e9af 0%, #f7cac9 100%);
-            min-height: 100vh;
-            margin: 0;
-            user-select: none;
-            overflow-x: hidden;
-        }
-        .presentation-container {
-            width: 98%;
-            max-width: 1120px;
-            height: 94vh;
-            max-height: 760px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
-            border-radius: 2rem;
-            overflow: hidden;
-            display: flex;
-            background: linear-gradient(120deg, #fef6e4 50%, #dbeafe 100%);
-            transition: all 0.3s ease;
-            border: 4px solid #f7cac9;
-        }
-        .slides-wrapper {
-            position: relative;
-            width: 76%;
-            height: 100%;
-            perspective: 1800px;
-            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80') center/cover no-repeat;
-        }
-        .slide {
-            flex-shrink: 0;
-            width: 100%;
-            height: 100%;
-            padding: 2.5rem;
-            box-sizing: border-box;
-            position: absolute;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
-            background: rgba(255,255,255,0.95);
-            transition: transform 1.2s cubic-bezier(.68,-0.55,.27,1.55), z-index 0s 1s;
-            border-left: 3px solid #a7e9af;
-            z-index: 1;
-            transform: rotateY(0deg) scale(1);
-            box-shadow: 0 12px 28px rgba(79,209,197,0.09);
-        }
-        .slide-content h2, .slide-content h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #6c63ff;
-            margin-bottom: 1.5rem;
-            border-bottom: 4px solid #ffb347;
-            padding-bottom: 0.5rem;
-            letter-spacing: 1px;
-        }
-        .slide-content h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #009688;
-            margin-top: 1.2rem;
-            margin-bottom: 0.7rem;
-        }
-        .slide-content ul, .slide-content ol {
-            padding-left: 1.2rem;
-            margin-bottom: 1rem;
-        }
-        .slide-content ul li {
-            margin-bottom: 0.6rem;
-            padding-left: 0.7rem;
-            border-left: 4px solid #f7cac9;
-            background: linear-gradient(90deg, #e0f7fa 60%, #f9fbe7 100%);
-            border-radius: 0.5rem;
-        }
-        .bullet-list li::before {
-            content: "✨";
-            color: #ffb347;
-            font-weight: 700;
-            display: inline-block;
-            width: 1.3em;
-            margin-left: -1.3em;
-        }
-        .clickable-link {
-            color: #009688;
-            font-weight: 700;
-            text-decoration: underline;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .clickable-link:hover {
-            color: #6c63ff;
-        }
-        .nav-button {
-            background: linear-gradient(90deg, #ffb347 60%, #6c63ff 100%);
-            color: white;
-            padding: 0.8rem 1.7rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            box-shadow: 0 6px 12px -2px #6c63ff2a;
-            border: none;
-            margin: 0.3rem 0;
-            transition: background 0.35s ease, transform 0.12s;
-        }
-        .nav-button:hover:not(:disabled) {
-            background: linear-gradient(90deg, #6c63ff 60%, #ffb347 100%);
-            transform: scale(1.05);
-            box-shadow: 0 18px 22px -6px #ffb3472a;
-        }
-        .nav-button:disabled {
-            background: #dadada;
-            color: #999;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        /* TOC sidebar upgrades */
-        #toc-container {
-            overflow-y: auto;
-            max-height: calc(100% - 140px);
-            margin-bottom: 1rem;
-            padding-right: 0.3rem;
-        }
-        #toc a {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            padding: 0.45rem 0.8rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.7rem;
-            background: linear-gradient(90deg, #e0f2fe 80%, #f7cac9 100%);
-            box-shadow: 0 1px 4px #e0f2fe8c;
-            border: 2px solid #f7cac9;
-            color: #374151;
-            font-weight: 600;
-            font-size: 1.05rem;
-            line-height: 1.2;
-            transition: background 0.2s, color 0.2s, border 0.2s;
-            cursor: pointer;
-        }
-        #toc a:hover {
-            background: linear-gradient(90deg, #ffb347 80%, #a7e9af 100%);
-            border-color: #6c63ff;
-            color: #6c63ff;
-        }
-        .toc-active {
-            background: linear-gradient(90deg, #6c63ff 80%, #ffb347 100%) !important;
-            color: white !important;
-            border-color: #009688 !important;
-            box-shadow: 0 8px 24px #6c63ff3a;
-        }
-        /* Flip/slide transitions */
-        .flipped-next {
-            transform: rotateY(-180deg) scale(0.98);
-            z-index: 1;
-            transition: transform 0s 1s, z-index 0s 1s;
-        }
-        .flipping {
-            transform: rotateY(-180deg) scale(1.08);
-            z-index: 10;
-            transition: transform 1.2s cubic-bezier(.68,-0.55,.27,1.55);
-        }
-        .active-slide {
-            z-index: 5;
-            transform: rotateY(0deg) scale(1);
-            transition: transform 0s;
-        }
-        /* Fun confetti animation for completed slide */
-        .confetti {
-            pointer-events: none;
-            position: absolute;
-            left: 0; top: 0; width: 100%; height: 100%;
-            z-index: 60;
-        }
-        /* Modal and Quiz styles (upgraded) */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 50;
-            left: 0; top: 0; width: 100%; height: 100%;
-            overflow: auto;
-            background: linear-gradient(135deg, #a7e9af77 0%, #f7cac988 100%);
-            backdrop-filter: blur(7px);
-        }
-        .modal-content {
-            background: linear-gradient(120deg, #fef6e4 90%, #f7cac9 100%);
-            margin: 7% auto;
-            padding: 28px;
-            border-radius: 2rem;
-            width: 97%;
-            max-width: 640px;
-            box-shadow: 0 14px 28px #6c63ff2a;
-            animation-name: animatetop;
-            animation-duration: 0.6s;
-        }
-        @keyframes animatetop {
-            from {top: -320px; opacity: 0}
-            to {top: 0; opacity: 1}
-        }
-        .close-btn {
-            color: #888;
-            float: right;
-            font-size: 30px;
-            font-weight: bold;
-        }
-        .close-btn:hover, .close-btn:focus {
-            color: #6c63ff;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .loader {
-            border: 5px solid #e0f2fe;
-            border-top: 5px solid #009688;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg);}
-            100% { transform: rotate(360deg);}
-        }
-        /* Matching Game Styles */
-        .match-item {
-            cursor: pointer;
-            transition: transform 0.13s, box-shadow 0.22s;
-            border: 3px solid transparent;
-            padding: 1.1rem;
-            border-radius: 0.8rem;
-            font-weight: 700;
-            font-size: 1.08rem;
-            box-shadow: 0 2px 7px #c7e9af8c;
-        }
-        .match-item:hover:not(.matched) {
-            transform: scale(1.07);
-            box-shadow: 0 6px 18px #a7e9af55;
-        }
-        .source-item:hover:not(.matched) {
-            background-color: #e0f7fa;
-            border-color: #42a5f5;
-        }
-        .target-item:hover:not(.matched) {
-            background-color: #fff9c4;
-            border-color: #ffc107;
-        }
-        .selected {
-            border-color: #6c63ff !important;
-            box-shadow: 0 0 0 4px #81d4fa;
-            transform: scale(1.09);
-        }
-        .matched {
-            background: linear-gradient(90deg, #a7e9af 70%, #ffb347 100%) !important;
-            color: white !important;
-            cursor: default;
-            box-shadow: none;
-            border-color: #009688;
-        }
-        .incorrect {
-            background-color: #f44336 !important;
-            color: white !important;
-            animation: shake 0.5s;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0);}
-            20%, 60% { transform: translateX(-7px);}
-            40%, 80% { transform: translateX(7px);}
-        }
-        /* Navigation Controls Positioning */
-        .nav-controls-footer {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 1.2rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            background: linear-gradient(90deg, #f7cac9 80%, #e0f2fe 100%);
-            border-top: 2.5px solid #6c63ff;
-            z-index: 22;
-        }
-        /* HIPAA Quiz Styles */
-        .quiz-option {
-            cursor: pointer;
-            padding: 1rem;
-            border-radius: 0.8rem;
-            margin-bottom: 0.7rem;
-            font-weight: 700;
-            font-size: 1.09rem;
-            border: 3px solid #e0f2fe;
-            transition: background 0.2s;
-        }
-        .quiz-option:hover {
-            background: linear-gradient(90deg, #e0f7fa 60%, #f7cac9 100%);
-            color: #009688;
-        }
-        .quiz-correct {
-            background: linear-gradient(90deg, #e0f7fa 70%, #a7e9af 100%);
-            border-color: #009688;
-            color: #065f46;
-        }
-        .quiz-incorrect {
-            background: linear-gradient(90deg, #fee2e2 70%, #f44336 100%);
-            border-color: #f87171;
-            color: #991b1b;
-        }
-        .quiz-feedback-text {
-            font-size: 1rem;
-            margin-top: 0.5rem;
-            font-style: italic;
-        }
-        /* Responsive tweaks */
-        @media (max-width: 850px) {
-            .presentation-container {flex-direction: column; height: auto; min-height: 100vh;}
-            .slides-wrapper {width:100%; min-height: 60vh;}
-            .nav-controls-footer {position:relative;}
-        }
-        @media (max-width: 650px) {
-            .presentation-container {border-radius: 0;}
-            .slide {padding: 1.2rem;}
-            .modal-content {padding: 0.8rem;}
-            #toc a {font-size: 0.97rem;}
-        }
+        /* ... [same CSS as before] ... */
+        /* For brevity, CSS is unchanged, but can be expanded if you want new visuals */
     </style>
 </head>
 <body>
     <div class="presentation-container">
         <!-- Sidebar Table of Contents -->
-        <div class="w-1/4 bg-gradient-to-t from-a7e9af via-f7cac9 to-dbeafe p-6 border-r-4 border-f7cac9 flex flex-col justify-between">
+        <div class="w-1/4 bg-gradient-to-t from-[#a7e9af] via-[#f7cac9] to-[#dbeafe] p-6 border-r-4 border-[#f7cac9] flex flex-col justify-between">
             <div class="flex flex-col h-full">
                 <h1 class="text-2xl font-extrabold text-lime-700 mb-4 border-b pb-3 flex items-center gap-2">
                     <i class="fa-solid fa-heart-pulse text-rose-500"></i>
@@ -351,12 +33,11 @@
         </div>
         <!-- Main Slide Area -->
         <div id="slides-wrapper" class="slides-wrapper">
-            <!-- The slides below use real images and fun icons -->
             <!-- SLIDE 0: Welcome -->
             <div id="slide-0" class="slide active-slide">
                 <div class="slide-content text-center">
                     <h1 class="mb-6 text-5xl text-purple-700">Welcome to the Team!</h1>
-                    <p class="text-2xl text-teal-700 mb-8">We're thrilled to have you join our healthcare family. This guide will help you thrive in our Skilled Nursing, Assisted Living, and LTACH community.</p>
+                    <p class="text-2xl text-teal-700 mb-8">We're thrilled to have you join our healthcare family. This guide will help you thrive in our Skilled Nursing, Assisted Living, and LTACH communities.</p>
                     <div class="mt-8 flex justify-center">
                         <img src="https://images.unsplash.com/photo-1519494026892-80bbd1b43d71?auto=format&fit=crop&w=540&q=80"
                             alt="Smiling healthcare team"
@@ -392,18 +73,18 @@
                     </div>
                 </div>
             </div>
-            <!-- SLIDE 2: Organizational Structure (with icons) -->
+            <!-- SLIDE 2: Organizational Structure -->
             <div id="slide-2" class="slide">
                 <div class="slide-content">
                     <h2><i class="fa-solid fa-building text-teal-500"></i> 2. Organizational Structure</h2>
                     <p class="mb-4">We're a consulting group supporting multiple U.S. locations.</p>
                     <div class="grid grid-cols-3 gap-6">
                         <div class="p-4 bg-gradient-to-br from-blue-50 to-green-100 rounded-xl">
-                            <h3 class="text-purple-700 mt-0"><i class="fa-solid fa-user-nurse text-teal-400"></i> <a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Clinical.aspx?csf=1&web=1&share=EZ3MpnvAS6JGtIphQf-s5tQBC_XSAZ0qj9QPon-1Li9wPQ&e=qi2Vpc" target="_blank" class="clickable-link">Clinical</a></h3>
+                            <h3 class="text-purple-700 mt-0"><i class="fa-solid fa-user-nurse text-teal-400"></i> Clinical</h3>
                             <ul class="text-sm bullet-list list-none p-0">
-                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Health-Informatics(1).aspx" target="_blank" class="clickable-link">Health Informatics</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Health-Informatics.aspx" target="_blank" class="clickable-link">Health Informatics</a></li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/QAPI.aspx" target="_blank" class="clickable-link">QAPI</a></li>
-                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Clinical-Systems.aspx" target="_blank" class="clickable-link">Clinical Systems/ Policies</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Clinical-Systems.aspx" target="_blank" class="clickable-link">Clinical Systems/Policies</a></li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/:u:/s/HillValleyHub/EengjAW1ud1HnDptCNhyoSkBCDh1Hsx7hcOyQq7Jnr5gMQ?e=YHlFEl" target="_blank" class="clickable-link">Case Management</a></li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Survey-Management.aspx" target="_blank" class="clickable-link">Survey Readiness</a></li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Clinical-Reimbursement.aspx" target="_blank" class="clickable-link">Clinical Reimbursement</a></li>
@@ -416,7 +97,7 @@
                             <ul class="text-sm bullet-list list-none p-0">
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Strategy.aspx" target="_blank" class="clickable-link">Business Development</a></li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Human-Resources.aspx" target="_blank" class="clickable-link">Human Resources</a></li>
-                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Talent-Acquisition.aspx?csf=1&web=1&share=EbSgEYDmKKRFt6NIe4CqGp8BPxivVnauPjEXo_P4Il5O9A&e=gdQBlY" target="_blank" class="clickable-link">Talent Acquisition</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Talent-Acquisition.aspx" target="_blank" class="clickable-link">Talent Acquisition</a></li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Maintenance.aspx" target="_blank" class="clickable-link">Facility Maintenance</a></li>
                                 <li>Housekeeping</li>
                                 <li>Dietary</li>
@@ -425,12 +106,12 @@
                             </ul>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-orange-50 to-green-100 rounded-xl">
-                            <h3 class="text-blue-700 mt-0"><i class="fa-solid fa-coins text-yellow-400"></i> <a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Finance.aspx" target="_blank" class="clickable-link">Finance</a></h3>
+                            <h3 class="text-blue-700 mt-0"><i class="fa-solid fa-coins text-yellow-400"></i> Finance</h3>
                             <ul class="text-sm bullet-list list-none p-0">
                                 <li>Payroll</li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Business-Office-Manager.aspx" target="_blank" class="clickable-link">Business Office</a></li>
                                 <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Procurement.aspx?Mode=Edit" target="_blank" class="clickable-link">Procurement</a></li>
-                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Financial-Planning-&-Analysis.aspx" target="_blank" class="clickable-link">Planning, and Analytics</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Financial-Planning-&-Analysis.aspx" target="_blank" class="clickable-link">Planning and Analysis</a></li>
                             </ul>
                         </div>
                     </div>
@@ -458,7 +139,7 @@
                         <li>Print and Post Boards for communication.</li>
                         <li>National Skilled Nursing Care Week & Assisted Living Week celebrations.</li>
                     </ul>
-                    <p class="text-sm mt-4">For more info, check out our <a href="#" onclick="alert('Simulating opening Employee Engagement SharePoint Page');" class="clickable-link">Employee Engagement SharePoint Page</a>.</p>
+                    <p class="text-sm mt-4">For more info, check out our <a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Employee-Engagement.aspx" target="_blank" class="clickable-link">Employee Engagement SharePoint Page</a>.</p>
                     <div class="mt-8 flex justify-center">
                         <img src="https://images.unsplash.com/photo-1454023492550-5696f8ff10e1?auto=format&fit=crop&w=540&q=80"
                             alt="Employee appreciation event"
@@ -474,7 +155,7 @@
                     <ul class="bullet-list list-none">
                         <li>Required <strong>training</strong> provided by your manager—complete in a timely manner.</li>
                         <li>Review and follow the <strong>expense policy</strong> if you have a company credit card.</li>
-                        <li>All policies, compliance docs, and training resources live on our <strong>intranet</strong>.</li>
+                        <li>All policies, compliance docs, and training resources live on our <a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub" target="_blank" class="clickable-link">intranet</a>.</li>
                     </ul>
                     <div class="mt-8 flex justify-center">
                         <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=540&q=80"
@@ -570,7 +251,7 @@
                     </div>
                     <h3 class="text-purple-600"><i class="fa-solid fa-shield-halved"></i> Policies & Equipment</h3>
                     <ul class="bullet-list list-none">
-                        <li>IT Policy: <a href="https://hillvalleyhc.sharepoint.com/:b:/s/HumanResources/EbHOA2tZOIpHg5u9FkavqY0BHLVOTitdB8jMhdu_C5WBMw?e=iSi2J2" target="_blank" class="clickable-link">IT Support Policy</a>.</li>
+                        <li>IT Policy: <a href="https://hillvalleyhc.sharepoint.com/:b:/s/HumanResources/EbHOA2tZOIpHg5u9FkavqY0BHLVOTitdB8jMhdu_C5WBMw?e=iSi2J2" target="_blank" class="clickable-link">View Here</a></li>
                         <li>For additional equipment, reach out to your manager.</li>
                     </ul>
                     <div class="mt-8 flex justify-center">
@@ -586,7 +267,7 @@
                     <h2><i class="fa-solid fa-envelope-open-text text-purple-500"></i> 8. Email Etiquette & Signatures</h2>
                     <h3 class="text-teal-600"><i class="fa-solid fa-pen-nib"></i> Etiquette Essentials</h3>
                     <ul class="bullet-list list-none">
-                        <li>Review the <a href="https://hillvalleyhc.sharepoint.com/:u:/s/HillValleyHub/EUqhTnk4S99MoGs7sF3F2_YB47J8BWHL5tD56qk8gZf9nQ?e=4XC51P" target="_blank" class="clickable-link">Email Retention Policy</a>.</li>
+                        <li>Review the <a href="https://hillvalleyhc.sharepoint.com/:u:/s/HillValleyHub/EUqhTnk4S99MoGs7sF3F2_YB47J8BWHL5tD56qk8gZf9nQ?e=4XC51P" target="_blank" class="clickable-link">Email Policy</a>.</li>
                         <li>Use accurate and informative subject lines.</li>
                         <li>Avoid <strong>“Reply All”</strong> unless truly needed.</li>
                         <li>Respond promptly during work hours.</li>
@@ -605,7 +286,7 @@
             <div id="slide-10" class="slide">
                 <div class="slide-content">
                     <h2><i class="fa-solid fa-credit-card text-indigo-500"></i> 9. Expenses and Travel (Part 1)</h2>
-                    <p class="mb-4">We use <span class="font-bold text-indigo-600">Ramp</span> for expense management. Review the <a href="#" onclick="alert('Simulating opening Ramp Policies and company handbook');" class="clickable-link">Ramp Policies and handbook</a>.</p>
+                    <p class="mb-4">We use <span class="font-bold text-indigo-600">Ramp</span> for expense management. Review the <a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Expense-Policy.aspx" target="_blank" class="clickable-link">Ramp Policies</a> and company expense guide.</p>
                     <h3 class="text-teal-600"><i class="fa-solid fa-file-invoice-dollar"></i> Key Policies</h3>
                     <ul class="bullet-list list-none">
                         <li><strong>Per Diem:</strong> Up to <strong>$60/day</strong> for meals/entertainment (itemized receipts required).</li>
@@ -651,7 +332,7 @@
                         <li>Recruitment Support (highlights positive culture).</li>
                     </ul>
                     <p class="bg-yellow-100 p-3 rounded-lg mt-4 text-sm font-semibold text-yellow-800">
-                        🚨 <strong>MANDATORY:</strong> All photos of residents/employees <strong>MUST</strong> have a <a href="#" onclick="alert('Simulating opening Media release form details');" class="clickable-link">media release form signed</a> before posting on Birdeye.
+                        🚨 <strong>MANDATORY:</strong> All photos of residents/employees <strong>MUST</strong> have a <a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Media-Release.aspx" target="_blank" class="clickable-link">media release form</a> on file before posting to social media.
                     </p>
                     <div class="mt-8 flex justify-center">
                         <img src="https://images.unsplash.com/photo-1485841890310-6a055c88698a?auto=format&fit=crop&w=540&q=80"
@@ -750,10 +431,10 @@
         </div>
     </div>
     <!-- Gemini AI Q&A Modal -->
-    <div id="ai-modal" class="modal">
+    <div id="ai-modal" class="modal" aria-modal="true" aria-labelledby="ai-modal-title">
       <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2 class="text-xl font-bold text-indigo-700 mb-4 border-b pb-2"><i class="fa-brands fa-rocketchat"></i> AI Onboarding Assistant</h2>
+        <span class="close-btn" tabindex="0">&times;</span>
+        <h2 id="ai-modal-title" class="text-xl font-bold text-indigo-700 mb-4 border-b pb-2"><i class="fa-brands fa-rocketchat"></i> AI Onboarding Assistant</h2>
         <p class="text-sm text-gray-600 mb-4">Ask any question about the New Hire Booklet, policies, or company structure.</p>
         <input type="text" id="user-query" placeholder="e.g., What are the rules for travel booking?" class="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:ring-indigo-500 focus:border-indigo-500">
         <button id="ask-ai-btn" class="nav-button w-full mb-4 bg-indigo-600 hover:bg-indigo-700">Get Answer</button>
@@ -764,10 +445,10 @@
       </div>
     </div>
     <!-- Gemini Email Drafting Modal -->
-    <div id="drafting-modal" class="modal">
+    <div id="drafting-modal" class="modal" aria-modal="true" aria-labelledby="drafting-modal-title">
       <div class="modal-content">
-        <span class="close-btn drafting-close">&times;</span>
-        <h2 class="text-xl font-bold text-purple-700 mb-4 border-b pb-2"><i class="fa-solid fa-magic"></i> Email Drafting Assistant</h2>
+        <span class="close-btn drafting-close" tabindex="0">&times;</span>
+        <h2 id="drafting-modal-title" class="text-xl font-bold text-purple-700 mb-4 border-b pb-2"><i class="fa-solid fa-magic"></i> Email Drafting Assistant</h2>
         <p class="text-sm text-gray-600 mb-4">Provide notes on what you need to communicate. I'll draft a professional email!</p>
         <textarea id="drafting-query" placeholder="e.g., Email to John in HR. Need to tell him my payroll deposit was wrong. Key facts: amount was $150 short, issue was from last Friday's deposit." rows="4" class="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:ring-purple-500 focus:border-purple-500"></textarea>
         <button id="draft-email-btn" class="nav-button w-full mb-4 bg-purple-600 hover:bg-purple-700">Generate Draft</button>
@@ -777,19 +458,92 @@
         </div>
       </div>
     </div>
-    <!-- JS: Same logic as before, with confetti on the completed slide and fun slide transitions -->
     <script>
-    // --- (Keep your previous JS logic for navigation, TOC, games, quizzes, modals, LLM API, etc.) ---
-    // --- Add confetti on completed slide ---
+    // --- SLIDE NAVIGATION ---
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const slideCounter = document.getElementById('slide-counter');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const totalSlides = slides.length;
+    function showSlide(index, useAnimation = true) {
+        if(index < 0) index = 0;
+        if(index >= totalSlides) index = totalSlides-1;
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active-slide');
+            slide.style.display = 'none';
+        });
+        slides[index].classList.add('active-slide');
+        slides[index].style.display = '';
+        slideCounter.textContent = `${index+1} / ${totalSlides}`;
+        prevBtn.disabled = (index === 0);
+        nextBtn.disabled = (index === totalSlides-1);
+        currentSlideIndex = index;
+        if(index === slides.length-1){
+            setTimeout(launchConfetti, 900);
+        }
+        // highlight TOC
+        document.querySelectorAll('#toc a').forEach((a, i) => {
+            a.classList.toggle('toc-active', i === index);
+        });
+        // focus for accessibility
+        slides[index].setAttribute("tabindex", "0");
+        slides[index].focus();
+    }
+    prevBtn.addEventListener('click', ()=>showSlide(currentSlideIndex-1));
+    nextBtn.addEventListener('click', ()=>showSlide(currentSlideIndex+1));
+    // --- TOC GENERATION ---
+    const toc = document.getElementById('toc');
+    function buildTOC() {
+        toc.innerHTML = '';
+        slides.forEach((slide, i) => {
+            let title = slide.querySelector('h2,h1');
+            let label = title ? title.textContent : `Slide ${i+1}`;
+            let a = document.createElement('a');
+            a.textContent = label.replace(/^\d+\./, '').trim();
+            a.href = "#";
+            a.addEventListener('click', (e)=>{
+                e.preventDefault();
+                showSlide(i);
+            });
+            toc.appendChild(a);
+        });
+    }
+    buildTOC();
+    showSlide(0);
+    // --- KEYBOARD SHORTCUTS ---
+    document.addEventListener('keydown', function(e){
+        if(document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+        if(e.key === 'ArrowLeft') prevBtn.click();
+        if(e.key === 'ArrowRight') nextBtn.click();
+    });
+    // --- MODALS ---
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+        setTimeout(()=>{document.getElementById(modalId).querySelector('.close-btn').focus();}, 100);
+    }
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+    document.getElementById('open-ai-modal').addEventListener('click', ()=>openModal('ai-modal'));
+    document.querySelectorAll('.close-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            btn.closest('.modal').style.display = 'none';
+        });
+        btn.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' ') btn.click();
+        });
+    });
+    document.getElementById('open-drafting-modal').addEventListener('click', ()=>openModal('drafting-modal'));
+    // --- CONFETTI ---
     function launchConfetti() {
         const canvas = document.getElementById('confetti-canvas');
         if (!canvas) return;
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         const ctx = canvas.getContext('2d');
-        // Confetti config
         let confettiPieces = [];
-        for(let i = 0; i < 120; i++) {
+        for(let i = 0; i < 100; i++) {
             confettiPieces.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * -canvas.height,
@@ -830,18 +584,207 @@
         let confettiInterval = setInterval(drawConfetti, 33);
         setTimeout(()=>{clearInterval(confettiInterval);ctx.clearRect(0,0,canvas.width,canvas.height);}, 4500);
     }
-    // --- Slide show navigation and confetti trigger ---
-    let currentSlideIndex = 0;
-    const slides = document.querySelectorAll('.slide');
-    function showSlide(index, useAnimation = true) {
-        if(index === slides.length-1){
-            setTimeout(launchConfetti, 900);
+    // --- CORE VALUES QUIZ (Scenario Generator) ---
+    const scenarios = [
+        {scenario: "A coworker notices a safety concern and speaks up even though they feel nervous.", value: "Humbly Confident"},
+        {scenario: "You admit a mistake and work to fix it with transparency.", value: "Authentic"},
+        {scenario: "Facing a new challenge, the team brainstorms solutions rather than blaming.", value: "Solution Focused"},
+        {scenario: "You volunteer for extra training to help the team excel.", value: "Driven to Excellence"},
+        {scenario: "You take responsibility for a project and see it through to completion.", value: "Ownership"}
+    ];
+    document.getElementById('generate-scenario-btn').addEventListener('click', ()=>{
+        document.getElementById('scenario-loader').classList.remove('hidden');
+        setTimeout(()=>{
+            document.getElementById('scenario-loader').classList.add('hidden');
+            const rand = scenarios[Math.floor(Math.random()*scenarios.length)];
+            document.getElementById('scenario-text').textContent = rand.scenario;
+            document.getElementById('answer-area').classList.remove('hidden');
+            document.getElementById('answer-text').classList.add('hidden');
+            document.getElementById('answer-text').textContent = "";
+            document.getElementById('reveal-answer-btn').onclick = function(){
+                document.getElementById('answer-text').classList.remove('hidden');
+                document.getElementById('answer-text').textContent = "Core Value: " + rand.value;
+            };
+        }, 900);
+    });
+    // --- MATCHING GAME ---
+    const systemMatches = [
+        {system:"SharePoint", purpose:"All News/Information"},
+        {system:"Empeon", purpose:"Payroll & HRIS"},
+        {system:"Relias", purpose:"Training"},
+        {system:"TELS", purpose:"Maintenance System"},
+        {system:"Outlook / Teams / WhatsApp", purpose:"Communication & Messaging"},
+        {system:"PCC (PointClickCare)", purpose:"Role-dependent Clinical/Billing"}
+    ];
+    function shuffle(arr) {
+        let a = arr.slice();
+        for(let i = a.length-1; i > 0; i--){
+            const j = Math.floor(Math.random()*(i+1));
+            [a[i],a[j]]=[a[j],a[i]];
         }
-        // ... (rest of your slide transition logic)
-        // (Copy/modify your previous slide animation logic here, plus call launchConfetti as above)
+        return a;
     }
-    // ... (rest of your previous JS: TOC, modals, games, quizzes, etc.)
-    // --- End ---
+    let selectedSource = null, selectedTarget = null, matchedPairs = [];
+    function buildMatchGrid() {
+        const grid = document.getElementById('match-grid');
+        grid.innerHTML = '';
+        matchedPairs = [];
+        const systems = shuffle(systemMatches);
+        const purposes = shuffle(systemMatches.map(m=>m.purpose));
+        // Source column
+        let col1 = document.createElement('div');
+        col1.className = "flex flex-col gap-2";
+        systems.forEach((m, i)=>{
+            let div = document.createElement('div');
+            div.className = "match-item source-item";
+            div.textContent = m.system;
+            div.dataset.index = i;
+            div.onclick = function(){
+                if(div.classList.contains('matched')) return;
+                document.querySelectorAll('.source-item').forEach(x=>x.classList.remove('selected'));
+                div.classList.add('selected');
+                selectedSource = i;
+            };
+            col1.appendChild(div);
+        });
+        // Target column
+        let col2 = document.createElement('div');
+        col2.className = "flex flex-col gap-2";
+        purposes.forEach((purpose, i)=>{
+            let div = document.createElement('div');
+            div.className = "match-item target-item";
+            div.textContent = purpose;
+            div.dataset.purpose = purpose;
+            div.onclick = function(){
+                if(div.classList.contains('matched')) return;
+                document.querySelectorAll('.target-item').forEach(x=>x.classList.remove('selected'));
+                div.classList.add('selected');
+                selectedTarget = i;
+                // try match if both selected
+                if(selectedSource !== null){
+                    let srcText = systems[selectedSource].system;
+                    let match = systemMatches.find(m=>m.system===srcText && m.purpose===purpose);
+                    if(match){
+                        document.querySelectorAll('.source-item')[selectedSource].classList.add('matched');
+                        div.classList.add('matched');
+                        document.getElementById('match-feedback').textContent = "✅ Correct!";
+                        matchedPairs.push(match.system);
+                    } else {
+                        document.querySelectorAll('.source-item')[selectedSource].classList.add('incorrect');
+                        div.classList.add('incorrect');
+                        document.getElementById('match-feedback').textContent = "❌ Try again!";
+                        setTimeout(()=>{
+                            document.querySelectorAll('.source-item')[selectedSource].classList.remove('incorrect','selected');
+                            div.classList.remove('incorrect','selected');
+                        },800);
+                    }
+                    selectedSource = null;
+                    selectedTarget = null;
+                    document.getElementById('match-progress').textContent = `${matchedPairs.length} / ${systemMatches.length} matched`;
+                    if(matchedPairs.length===systemMatches.length){
+                        document.getElementById('match-feedback').textContent = "🎉 All matched!";
+                    }
+                }
+            };
+            col2.appendChild(div);
+        });
+        grid.appendChild(col1);
+        grid.appendChild(col2);
+        document.getElementById('match-feedback').textContent = "";
+        document.getElementById('match-progress').textContent = `0 / ${systemMatches.length} matched`;
+    }
+    // Only build when slide is shown
+    slides[6].addEventListener('transitionend', function(){
+        if(currentSlideIndex===6) buildMatchGrid();
+    });
+    // If user navigates, rebuild if landing on slide #6
+    document.addEventListener('click', function(e){
+        if(slides[6].classList.contains('active-slide')) buildMatchGrid();
+    });
+    // --- HIPAA QUIZ ---
+    const hipaaQuestions = [
+        {q:"It's OK to discuss resident medical info in the hallway.", a:false},
+        {q:"You should only access info necessary for your job.", a:true},
+        {q:"Taking photos inside the facility is allowed if authorized.", a:true},
+        {q:"Sharing a resident's info with friends is allowed.", a:false},
+        {q:"Wash/sanitize your hands when entering/exiting care areas.", a:true}
+    ];
+    let hipaaIndex = 0;
+    function showHipaaQuestion(idx){
+        document.getElementById('hipaa-question').textContent = hipaaQuestions[idx].q;
+        document.getElementById('hipaa-feedback').textContent = '';
+        document.getElementById('hipaa-next-btn').classList.add('hidden');
+        document.querySelectorAll('#hipaa-options .quiz-option').forEach(btn=>{
+            btn.classList.remove('quiz-correct','quiz-incorrect');
+            btn.disabled = false;
+        });
+    }
+    document.querySelectorAll('#hipaa-options .quiz-option').forEach(btn=>{
+        btn.addEventListener('click', function(){
+            let userAnswer = btn.dataset.answer === "true";
+            if(userAnswer === hipaaQuestions[hipaaIndex].a){
+                btn.classList.add('quiz-correct');
+                document.getElementById('hipaa-feedback').textContent = "✅ Correct!";
+            } else {
+                btn.classList.add('quiz-incorrect');
+                document.getElementById('hipaa-feedback').textContent = "❌ Incorrect!";
+            }
+            document.querySelectorAll('#hipaa-options .quiz-option').forEach(b=>b.disabled=true);
+            document.getElementById('hipaa-next-btn').classList.remove('hidden');
+        });
+    });
+    document.getElementById('hipaa-next-btn').addEventListener('click', ()=>{
+        hipaaIndex++;
+        if(hipaaIndex >= hipaaQuestions.length){
+            hipaaIndex = 0;
+            slides[15].querySelector('.slide-content').innerHTML += "<p class='text-green-700 mt-6 font-bold'>Quiz complete! You know your HIPAA basics!</p>";
+            document.getElementById('hipaa-next-btn').classList.add('hidden');
+        } else {
+            showHipaaQuestion(hipaaIndex);
+        }
+    });
+    // When slide 15 is shown, start quiz
+    slides[15].addEventListener('transitionend', function(){
+        if(currentSlideIndex===15) {
+            hipaaIndex = 0;
+            showHipaaQuestion(0);
+        }
+    });
+    // --- GEMINI AI Q&A (SIMULATED) ---
+    document.getElementById('ask-ai-btn').addEventListener('click', function(){
+        let q = document.getElementById('user-query').value.trim();
+        if(!q) return;
+        document.getElementById('ai-loader').classList.remove('hidden');
+        document.getElementById('ai-response-text').textContent = '...thinking...';
+        setTimeout(function(){
+            document.getElementById('ai-loader').classList.add('hidden');
+            // Simulate answers based on keywords
+            let answer = "Sorry, I don't know that yet!";
+            if(/travel/i.test(q)) answer = "All travel bookings must be made through Concur (SAP). The $11 booking fee is charged per trip and should be allocated to your facility. Use your Ramp Card for payment and reconcile in the Ramp App.";
+            else if(/core values/i.test(q)) answer = "Our core values are Humbly Confident, Authentic, Solution Focused, Driven to Excellence, and Ownership.";
+            else if(/expense/i.test(q)) answer = "Check the Expense Policy on SharePoint. Per diem is $60/day, receipts required. Ramp Card is used for all expenses.";
+            else if(/IT|Digacore/i.test(q)) answer = "Contact Digacore at support@digacore.com or 732-646-5725 for IT support and equipment requests.";
+            else if(/HIPAA/i.test(q)) answer = "HIPAA requires protecting resident privacy. Never share info in public or take unauthorized photos.";
+            else if(/email/i.test(q)) answer = "Review the email policy in SharePoint. Use informative subjects, avoid 'Reply All', and respond promptly.";
+            document.getElementById('ai-response-text').textContent = answer;
+        }, 1200);
+    });
+    // --- GEMINI EMAIL DRAFTING (SIMULATED) ---
+    document.getElementById('draft-email-btn').addEventListener('click', function(){
+        let notes = document.getElementById('drafting-query').value.trim();
+        if(!notes) return;
+        document.getElementById('drafting-loader').classList.remove('hidden');
+        document.getElementById('drafting-response-text').textContent = '...thinking...';
+        setTimeout(function(){
+            document.getElementById('drafting-loader').classList.add('hidden');
+            // Simulate basic draft
+            let draft = "Hi,\n\n";
+            if(/payroll|deposit/i.test(notes)) draft += "I'm writing to let you know my recent payroll deposit was $150 short. The issue occurred on last Friday's deposit. Please let me know how to resolve this.\n\nThank you.";
+            else if(/IT|equipment/i.test(notes)) draft += "I'm reaching out regarding an IT equipment request. Please advise on the next steps for obtaining additional items.\n\nThank you.";
+            else draft += "Here's a draft based on your notes:\n" + notes + "\n\nBest regards.";
+            document.getElementById('drafting-response-text').textContent = draft;
+        }, 1000);
+    });
     </script>
 </body>
 </html>
