@@ -170,6 +170,61 @@
             transition: transform 0s;
         }
         
+        /* --- Card Flip Styles --- */
+        .card-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .flip-card {
+            width: 45%;
+            height: 150px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .flip-card-front {
+            background-color: #1e40af; /* Deep Blue Front */
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border: 2px solid #00b0f0;
+        }
+        .flip-card-back {
+            background-color: #f0f9ff; /* Very Light Blue Back */
+            color: #1f2937;
+            transform: rotateY(180deg);
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 2px solid #93c5fd;
+        }
+
         /* Modal and Game Styles (Kept functional but clean) */
         .modal {
             display: none; 
@@ -329,10 +384,10 @@
         <!-- Main Slide Area -->
         <div id="slides-wrapper" class="slides-wrapper">
 
-            <!-- SLIDE 0: Welcome -->
+            <!-- SLIDE 0: Welcome (Content Swapped back to be the start) -->
             <div id="slide-0" class="slide active-slide">
-                <div class="slide-content">
-                    <h1 class="text-4xl font-extrabold text-indigo-700 mb-4 pt-10">Welcome to the Team!</h1>
+                <div class="slide-content text-center pt-20">
+                    <h1 class="text-4xl font-extrabold text-indigo-700 mb-4">Welcome to the Team!</h1>
                     <p class="text-2xl text-gray-600 mb-8">We are absolutely delighted to have you join our team and become a key part of our mission. This booklet is your essential guide to our culture, systems, and values.</p>
                     
                     <div class="mt-20">
@@ -346,21 +401,53 @@
             <div id="slide-1" class="slide">
                 <div class="slide-content">
                     <h2>1. Core Values</h2>
-                    <p class="text-lg mb-4">Our core values are more than just statements—they’re daily practices that guide us in every conversation and decision.</p>
-                    <ul class="grid grid-cols-2 gap-4 mt-8 list-none p-0">
-                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Humbly Confident</li>
-                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Authentic</li>
-                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Solution Focused</li>
-                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Driven to Excellence</li>
-                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Ownership</li>
-                    </ul>
+                    <p class="text-lg mb-4">Click a card below to see the definition. Our core values are daily practices that guide us in every conversation and decision.</p>
+                    
+                    <!-- Core Values Flip Cards -->
+                    <div class="card-container">
+                        
+                        <div class="flip-card" onclick="this.classList.toggle('flipped');">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">Humbly Confident</div>
+                                <div class="flip-card-back"><strong>Definition:</strong> We have strong belief in our capabilities, but always remain receptive to new ideas, feedback, and differing perspectives. We prioritize the team's success over personal glory.</div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped');">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">Authentic</div>
+                                <div class="flip-card-back"><strong>Definition:</strong> We operate with transparency, honesty, and integrity. We strive to be true to ourselves and our mission in all professional interactions, fostering genuine trust.</div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped');">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">Solution Focused</div>
+                                <div class="flip-card-back"><strong>Definition:</strong> We confront challenges head-on by actively seeking innovative and practical solutions, rather than dwelling on problems or assigning blame.</div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped');">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">Driven to Excellence</div>
+                                <div class="flip-card-back"><strong>Definition:</strong> We are continuously pursuing high standards and measurable results. We are proactive in identifying areas for improvement to elevate quality of care and service.</div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped');">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">Ownership</div>
+                                <div class="flip-card-back"><strong>Definition:</strong> We take personal responsibility for our actions and outcomes. We treat company and facility resources as if they were our own, ensuring accountability from start to finish.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Core Values Flip Cards -->
 
                     <div id="core-values-quiz" class="mt-8 p-4 border border-indigo-200 rounded-lg bg-indigo-50">
                         <h3 class="mt-0 text-indigo-600 border-b pb-2">Value in Action: Scenario Quiz </h3>
                         <p class="text-sm italic text-gray-700 mb-3">Test your knowledge of our core values in a real-world setting.</p>
                         <button id="generate-scenario-btn" class="nav-button bg-pink-500 hover:bg-pink-600 text-sm py-2 px-4 inline-block transition-all">Generate Scenario</button>
                         <p id="scenario-text" class="text-sm italic text-gray-700 mt-3"></p>
-                        <div id="scenario-loader" class="loader hidden mt-3"></div>
                         <div id="answer-area" class="mt-3 hidden">
                             <button id="reveal-answer-btn" class="nav-button bg-yellow-500 hover:bg-yellow-600 text-sm py-2 px-4 inline-block transition-all">Reveal Core Value</button>
                             <p id="answer-text" class="text-sm font-bold text-yellow-800 mt-2 hidden"></p>
@@ -563,22 +650,16 @@
                         <li>Respond in a timely manner during your working hours.</li>
                     </ul>
                     
-                    <div class="mt-8 p-4 border border-indigo-200 rounded-lg bg-indigo-50">
-                        <h3 class="mt-0 text-indigo-600 border-b pb-2">Drafting Assistant </h3>
-                        <p class="text-sm text-gray-700 mb-3">Provide notes to draft a professional email compliant with our etiquette rules.</p>
-                        <textarea id="drafting-query" placeholder="e.g., Email to John in HR. Need to tell him my payroll deposit was wrong. Key facts: amount was $150 short, issue was from last Friday's deposit." 
-               rows="4" class="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:ring-purple-500 focus:border-purple-500"></textarea>
-                        
-                        <button id="draft-email-btn" class="nav-button bg-purple-500 hover:bg-purple-600 text-sm py-2 px-4 inline-block transition-all">Generate Draft</button>
-                        <div id="drafting-response-area" class="min-h-40 p-3 bg-gray-50 rounded-lg border border-gray-200 whitespace-pre-wrap mt-3">
-                            <p id="drafting-response-text" class="text-sm text-gray-700">Your professional email draft will appear here...</p>
-                            <div id="drafting-loader" class="loader hidden mt-4"></div>
-                        </div>
-                    </div>
-
                     <h3 class="text-indigo-600">Email Signatures (Auto-Generated)</h3>
                     <p class="text-sm">Signatures are automatically generated. <strong>Do not alter or delete</strong> them.</p>
-                    <p class="text-sm mt-2">To change your default phone number (currently mobile), contact IT at <a href="mailto:Support@DigaCore.com" class="clickable-link">Support@DigaCore.com</a>.</p>
+                    <div class="bg-gray-100 p-3 mt-2 rounded-lg text-sm italic">
+                        <p><strong>Example Signature:</strong></p>
+                        <p>[Name]</p>
+                        <p>[Title]</p>
+                        <p>[Company Name]</p>
+                        <p>Phone: [mobile phone number]</p>
+                    </div>
+                    <p class="text-sm mt-4">To change your default phone number (currently mobile), contact IT at <a href="mailto:Support@DigaCore.com" class="clickable-link">Support@DigaCore.com</a>.</p>
                 </div>
             </div>
 
@@ -700,11 +781,11 @@
                 </div>
             </div>
 
-            <!-- SLIDE 16: End Slide -->
+            <!-- SLIDE 16: End Slide (Content Swapped back to be the end) -->
             <div id="slide-16" class="slide">
                 <div class="slide-content text-center pt-20">
-                    <h1 class="text-4xl font-extrabold text-indigo-700 mb-4">You're All Set!</h1>
-                    <p class="text-xl text-gray-600 mb-8">Ready to move on to your next onboarding steps.</p>
+                    <h1 class="text-4xl font-extrabold text-indigo-700 mb-4">Congratulations, You've Completed the Orientation!</h1>
+                    <p class="text-2xl text-gray-600 mb-8">We are so happy you are here and confident you have the tools to succeed. Welcome aboard!</p>
                     <a href="#slide-0" class="nav-button inline-block px-8 py-3 bg-green-600 hover:bg-green-700" onclick="currentSlideIndex = 0; showSlide(0, false); return false;">Review Slideshow</a>
                      
                 </div>
@@ -922,6 +1003,7 @@
             answerArea.classList.add('hidden');
             revealAnswerBtn.classList.add('hidden');
             answerText.classList.add('hidden');
+            answerText.textContent = ''; // Clear previous answer
 
             // Hardcoded Scenarios based on the provided context/industry
             const scenarios = [
@@ -948,7 +1030,6 @@
             setTimeout(() => {
                 scenarioText.textContent = data.scenario;
                 currentAnswer = data.answer;
-                answerText.textContent = `Core Value: ${currentAnswer}`;
                 
                 answerArea.classList.remove('hidden');
                 revealAnswerBtn.classList.remove('hidden');
@@ -1132,6 +1213,13 @@
             prevBtn.addEventListener('click', prevSlide);
             nextBtn.addEventListener('click', nextSlide);
 
+            // FIX: Add click handler to reveal the currentAnswer value
+            revealAnswerBtn.onclick = function() {
+                answerText.textContent = `Core Value: ${currentAnswer}`;
+                answerText.classList.remove('hidden');
+                revealAnswerBtn.disabled = true; 
+            };
+            
             // Keyboard navigation (Arrow Keys)
             document.addEventListener('keydown', (e) => {
                 if (isAnimating) return;
@@ -1143,7 +1231,6 @@
             });
             
             // Re-apply event listeners for buttons that might be hidden initially
-            // Removed AI Modal/Drafting setup
             
             if(document.getElementById('generate-scenario-btn')) {
                  document.getElementById('generate-scenario-btn').onclick = generateCoreValueScenario;
@@ -1175,3 +1262,4 @@
     </script>
 </body>
 </html>
+
