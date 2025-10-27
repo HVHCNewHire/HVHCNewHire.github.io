@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Hire Booklet - Flipbook Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f2fe; /* Light blue/cyan healthcare background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+        .presentation-container {
+            width: 95%;
+            max-width: 1000px;
+            height: 90vh;
+            max-height: 700px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            border-radius: 1.5rem; /* More pronounced rounded corners */
+            overflow: hidden;
+            display: flex;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        /* --- Flipbook Styling & Transitions --- */
+        .slides-wrapper {
+            position: relative;
+            width: 75%;
+            height: 100%;
+            perspective: 1500px; 
+        }
+        .slide {
+            flex-shrink: 0;
+            width: 100%;
+            height: 100%;
+            padding: 3rem;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            background-color: white;
+            transition: transform 1s, z-index 0s 1s; 
+            border-left: 1px solid rgba(0,0,0,0.1);
+            z-index: 1; 
+            transform: rotateY(0deg); /* Default flat position */
+        }
+        .slide-content h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #00b0f0; /* Bright blue for flare */
+            padding-bottom: 0.5rem;
+        }
+        .slide-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e3a8a; /* Darker blue for headings */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .slide-content ul, .slide-content ol {
+            list-style-position: inside;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .slide-content ul li {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+            border-left: 3px solid #93c5fd; /* Soft blue bullet line */
+        }
+        .bullet-list li::before {
+            content: "•";
+            color: #1e40af; /* Deep blue bullet */
+            font-weight: 700;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        .clickable-link {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .clickable-link:hover {
+            color: #1e3a8a;
+        }
+        .nav-button {
+            background-color: #00b0f0; /* Bright blue button */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.1s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .nav-button:hover:not(:disabled) {
+            background-color: #1e40af; /* Darker blue on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .nav-button:disabled {
+            background-color: #a5b4fc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* New TOC Styling & Scrollability */
+        #toc-container {
+            overflow-y: auto; /* Enables scrolling for TOC */
+            max-height: calc(100% - 140px); /* Adjust based on header/footer height */
+            margin-bottom: 1rem;
+        }
+        #toc a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem; 
+            border-radius: 0.5rem;
+            transition: background-color 0.2s, color 0.2s, border 0.2s;
+            cursor: pointer;
+            background-color: #f3f4f6; 
+            border: 1px solid #e5e7eb; 
+            color: #374151;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+        #toc a:nth-child(even) {
+            background-color: #e0f7fa; /* Slightly different shade for zebra effect */
+        }
+        #toc a:hover {
+            background-color: #b3e5fc; /* Light hover blue */
+            border-color: #81d4fa;
+            color: #1e40af;
+        }
+        .toc-active {
+            background-color: #00b0f0 !important;
+            color: white !important;
+            border-color: #1e40af !important;
+            font-weight: 700;
+        }
+
+        /* Classes for the flip animation */
+        .flipped-next {
+            transform: rotateY(-180deg);
+            z-index: 1;
+            transition: transform 0s 1s, z-index 0s 1s;
+        }
+        .flipping {
+            transform: rotateY(-180deg);
+            z-index: 10;
+            transition: transform 1s ease-in-out;
+        }
+        .active-slide {
+            z-index: 5;
+            transform: rotateY(0deg);
+            transition: transform 0s;
+        }
+        
+        /* Modal and Game Styles (Kept functional but clean) */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 50; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+        }
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover, .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .loader {
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid #00b0f0; 
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Matching Game Styles */
+        .match-item {
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            border: 2px solid transparent;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        .match-item:hover:not(.matched) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .source-item:hover:not(.matched) {
+            background-color: #c5e1ff; /* Light Blue hover */
+            border-color: #42a5f5;
+        }
+        .target-item:hover:not(.matched) {
+            background-color: #fff9c4; /* Light Yellow hover */
+            border-color: #ffc107;
+        }
+        .selected {
+            border-color: #00b0f0 !important;
+            box-shadow: 0 0 0 3px #81d4fa;
+            transform: translateY(-2px);
+        }
+        .matched {
+            background-color: #4caf50 !important; /* Green for correct */
+            color: white !important;
+            cursor: default;
+            box-shadow: none;
+            border-color: #388e3c;
+        }
+        .incorrect {
+            background-color: #f44336 !important; /* Red for incorrect */
+            color: white !important;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        /* Navigation Controls Positioning */
+        .nav-controls-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+            border-top: 1px solid #e5e7eb;
+            z-index: 20; /* Ensure controls are always on top */
+        }
+        /* HIPAA Quiz Styles */
+        .quiz-option {
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.2s;
+            font-weight: 600;
+            border: 2px solid #e5e7eb;
+        }
+        .quiz-option:hover {
+            background-color: #f3f4f6;
+        }
+        .quiz-correct {
+            background-color: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+        .quiz-incorrect {
+            background-color: #fee2e2;
+            border-color: #f87171;
+            color: #991b1b;
+        }
+        .quiz-feedback-text {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+        <!-- Sidebar Table of Contents -->
+        <div class="w-1/4 bg-gray-50 p-6 border-r border-gray-200 flex flex-col justify-between">
+            <div class="flex flex-col h-full">
+                <h1 class="text-xl font-bold text-indigo-600 mb-4 border-b pb-3">New Hire Booklet</h1>
+                <div id="toc-container" class="flex-grow">
+                    <nav id="toc" class="text-sm">
+                        <!-- Links populated by JS, or can be added manually -->
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Gemini AI Q&A Button -->
+            <button id="open-ai-modal" class="nav-button bg-green-500 hover:bg-green-600 mt-4 flex items-center justify-center transition-all">
+                ✨ AI Q&A Assistant
+            </button>
+            <p class="text-xs text-gray-500 mt-2 text-center">Use arrows or click TOC to navigate.</p>
+        </div>
+
+        <!-- Main Slide Area -->
+        <div id="slides-wrapper" class="slides-wrapper">
+
+            <!-- SLIDE 0: Welcome -->
+            <div id="slide-0" class="slide active-slide">
+                <div class="slide-content">
+                    <h1 class="text-4xl font-extrabold text-indigo-700 mb-4 pt-10">Welcome to the Team!</h1>
+                    <p class="text-2xl text-gray-600 mb-8">We are absolutely delighted to have you join our team and become a key part of our mission. This booklet is your essential guide to our culture, systems, and values.</p>
+                    
+                    <div class="mt-20">
+                        <h3 class="text-xl font-semibold">Ready to begin?</h3>
+                        <p class="text-gray-500">Use the navigation buttons below or the Table of Contents on the left to start.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 1: Core Values -->
+            <div id="slide-1" class="slide">
+                <div class="slide-content">
+                    <h2>1. Core Values</h2>
+                    <p class="text-lg mb-4">Our core values are more than just statements—they’re daily practices that guide us in every conversation and decision.</p>
+                    <ul class="grid grid-cols-2 gap-4 mt-8 list-none p-0">
+                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Humbly Confident</li>
+                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Authentic</li>
+                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Solution Focused</li>
+                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Driven to Excellence</li>
+                        <li class="bg-indigo-50 p-4 rounded-lg shadow-sm text-center font-bold text-indigo-800">Ownership</li>
+                    </ul>
+
+                    <div id="core-values-quiz" class="mt-8 p-4 border border-indigo-200 rounded-lg bg-indigo-50">
+                        <h3 class="mt-0 text-indigo-600 border-b pb-2">Value in Action: Scenario Quiz ✨</h3>
+                        <p id="scenario-text" class="text-sm italic text-gray-700 mb-3">Click below to load a scenario! (Scenarios are tailored to Skilled Nursing/ALF/LTACH environments.)</p>
+                        <button id="generate-scenario-btn" class="nav-button bg-pink-500 hover:bg-pink-600 text-sm py-2 px-4 inline-block transition-all">Generate Scenario</button>
+                        <div id="scenario-loader" class="loader hidden mt-3"></div>
+                        <div id="answer-area" class="mt-3 hidden">
+                            <button id="reveal-answer-btn" class="nav-button bg-yellow-500 hover:bg-yellow-600 text-sm py-2 px-4 inline-block transition-all">Reveal Core Value</button>
+                            <p id="answer-text" class="text-sm font-bold text-yellow-800 mt-2 hidden"></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SLIDE 2: Organizational Structure (UPDATED WITH LINKS) -->
+            <div id="slide-2" class="slide">
+                <div class="slide-content">
+                    <h2>2. Organizational Structure</h2>
+                    <p class="mb-4">We are a consulting group partnered with multiple U.S. locations. Click the department names below for their SharePoint resource pages:</p>
+                    
+                    <div class="grid grid-cols-3 gap-6">
+                        <!-- CLINICAL DEPARTMENT LINKS -->
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="text-indigo-600 mt-0"><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Clinical.aspx?csf=1&web=1&share=EZ3MpnvAS6JGtIphQf-s5tQBC_XSAZ0qj9QPon-1Li9wPQ&e=qi2Vpc" target="_blank" class="clickable-link">Clinical</a></h3>
+                            <ul class="text-sm bullet-list list-none p-0">
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Health-Informatics(1).aspx" target="_blank" class="clickable-link">Health Informatics</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/QAPI.aspx" target="_blank" class="clickable-link">QAPI</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Clinical-Systems.aspx" target="_blank" class="clickable-link">Clinical Systems/ Policies</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/:u:/s/HillValleyHub/EengjAW1ud1HnDptCNhyoSkBCDh1Hsx7hcOyQq7Jnr5gMQ?e=YHlFEl" target="_blank" class="clickable-link">Case Management</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Survey-Management.aspx" target="_blank" class="clickable-link">Survey Readiness</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Clinical-Reimbursement.aspx" target="_blank" class="clickable-link">Clinical Reimbursement</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Education.aspx" target="_blank" class="clickable-link">Clinical Education</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Infection-Control.aspx" target="_blank" class="clickable-link">Infection Control</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- OPERATIONS DEPARTMENT LINKS -->
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="text-indigo-600 mt-0">Operations</h3>
+                            <ul class="text-sm bullet-list list-none p-0">
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Strategy.aspx" target="_blank" class="clickable-link">Business Development</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Human-Resources.aspx" target="_blank" class="clickable-link">Human Resources</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Talent-Acquisition.aspx?csf=1&web=1&share=EbSgEYDmKKRFt6NIe4CqGp8BPxivVnauPjEXo_P4Il5O9A&e=gdQBlY" target="_blank" class="clickable-link">Talent Acquisition</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Maintenance.aspx" target="_blank" class="clickable-link">Facility Maintenance</a></li>
+                                <li>Housekeeping</li>
+                                <li>Dietary</li>
+                                <li>Life Enrichment</li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Social-Services.aspx" target="_blank" class="clickable-link">Social Services</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- FINANCE DEPARTMENT LINKS -->
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="text-indigo-600 mt-0"><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Finance.aspx" target="_blank" class="clickable-link">Finance</a></h3>
+                            <ul class="text-sm bullet-list list-none p-0">
+                                <li>Payroll</li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Business-Office-Manager.aspx" target="_blank" class="clickable-link">Business Office</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Procurement.aspx?Mode=Edit" target="_blank" class="clickable-link">Procurement</a></li>
+                                <li><a href="https://hillvalleyhc.sharepoint.com/sites/HillValleyHub/SitePages/Financial-Planning-&-Analysis.aspx" target="_blank" class="clickable-link">Planning, and Analytics</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: Culture & Employee Experience -->
+            <div id="slide-3" class="slide">
+                <div class="slide-content">
+                    <h2>3. Culture & Employee Experience</h2>
+                    <p class="mb-4">Our focus goes beyond fun—we use data (surveys) to improve employee connection and support. </p>
+                    
+                    <h3 class="text-indigo-600">Development and Feedback</h3>
+                    <ul class="bullet-list list-none">
+                        <li>We use New Hire, Exit, Pulse and Engagement <strong>Surveys</strong> to collect feedback.</li>
+                        <li>We provide <strong>leadership development programs</strong> focused on soft skills, communication, empathy, and respect.</li>
+                    </ul>
+
+                    <h3 class="text-indigo-600">Engagement Support</h3>
+                    <ul class="bullet-list list-none">
+                        <li><strong>Kudos Cards</strong> for peer and manager recognition.</li>
+                        <li>Monthly employee engagement events ideas.</li>
+                        <li>Print and Post Boards for internal communication.</li>
+                        <li>National Skilled Nursing Care Week & Assisted Living Week & Hospital Week celebrations.</li>
+                    </ul>
+                    <p class="text-sm mt-4">For more information, check out our <a href="#" onclick="alert('Simulating opening Employee Engagement SharePoint Page');" class="clickable-link">Employee Engagement SharePoint Page</a>.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Policies & Training Essentials -->
+            <div id="slide-4" class="slide">
+                <div class="slide-content">
+                    <h2>4. Policies & Training Essentials</h2>
+                    <p class="mb-6">Compliance starts on Day One. Ensure these steps are managed promptly:</p>
+                    
+                    <ul class="bullet-list list-none">
+                        <li>Your required <strong>training</strong> will be provided by your manager and must be completed <strong>in a timely manner</strong>.</li>
+                        <li>Review and follow the <strong>expense policy in detail</strong> if you’ve received a company credit card.</li>
+                        <li>All policies, compliance documents, and training resources are housed in our <strong>intranet</strong>.</li>
+                    </ul>
+                    
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Systems & Tools You’ll Use (OVERVIEW) -->
+            <div id="slide-5" class="slide">
+                <div class="slide-content">
+                    <h2>5. Systems & Tools Overview</h2>
+                    <p class="mb-4">You’ll rely on several key systems and tools to succeed in your role. Here’s a quick reference:</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="mt-0 text-blue-700">System Name</h3>
+                            <ul class="bullet-list list-none text-sm font-semibold">
+                                <li><a href="https://www.sharepoint.com" target="_blank" class="clickable-link">SharePoint</a></li>
+                                <li><a href="https://www.empeon.com" target="_blank" class="clickable-link">Empeon</a></li>
+                                <li><a href="https://pcchillvalley.training.reliaslearning.com/" target="_blank" class="clickable-link">Relias</a></li>
+                                <li><a href="https://www.tels.net/TELSLogin/" target="_blank" class="clickable-link">TELS</a></li>
+                                <li>Outlook / Teams / WhatsApp</li>
+                                <li>PCC (PointClickCare)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="mt-0 text-blue-700">Primary Function</h3>
+                            <ul class="bullet-list list-none text-sm">
+                                <li>All News/Information</li>
+                                <li>Payroll & HRIS</li>
+                                <li>Training</li>
+                                <li>Maintenance System</li>
+                                <li>Communication & Messaging</li>
+                                <li>Role-dependent Clinical/Billing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+
+                    <h3 class="text-indigo-600 mt-6">Knowledge Check Next!</h3>
+                    <p class="text-sm">Ready to check your retention? Move to the next slide for the Systems Matching Game!</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: Systems Matching Game (INTERACTIVE) -->
+            <div id="slide-6" class="slide">
+                <div class="slide-content">
+                    <h2>5. Systems Knowledge Check</h2>
+                    <p class="mb-4">Match the system/tool with its correct purpose.</p>
+                    
+                    <div id="matching-game" class="p-4 bg-gray-100 rounded-lg">
+                        <div class="grid grid-cols-2 gap-4" id="match-grid">
+                            <!-- Game items will be injected here by JavaScript -->
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p id="match-feedback" class="font-bold text-lg text-gray-700"></p>
+                            <p id="match-progress" class="text-sm text-gray-500 mt-1"></p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- SLIDE 7: Onboarding & Development -->
+            <div id="slide-7" class="slide">
+                <div class="slide-content">
+                    <h2>6. Onboarding & Development</h2>
+                    <h3 class="text-indigo-600">First 90 Days</h3>
+                    <ul class="bullet-list list-none">
+                        <li>You will meet with several team members across departments through <strong>1:1 Microsoft Teams meetings</strong>.</li>
+                        <li>Your manager will guide you during your <strong>first 90 days</strong>.</li>
+                    </ul>
+                    <h3 class="text-indigo-600">Ongoing Development</h3>
+                    <p>We are committed to development. Our leadership programs are designed to help you grow as a people leader through soft skills, communication, and team-building.</p>
+                    
+                </div>
+            </div>
+
+            <!-- SLIDE 8: IT Support -->
+            <div id="slide-8" class="slide">
+                <div class="slide-content">
+                    <h2>7. IT Support (Digacore)</h2>
+                    <p class="mb-4">Contact Digacore for IT needs and equipment requests:</p>
+                    
+                    <div class="bg-red-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-red-700 mt-0">Contact Information</h3>
+                        <p class="mb-2">Email: <a href="mailto:support@digacore.com" class="clickable-link">support@digacore.com</a></p>
+                        <p class="mb-2">Phone Number: 732-646-5725</p>
+                    </div>
+                    
+                    <h3 class="text-indigo-600">Policies & Equipment</h3>
+                    <ul class="bullet-list list-none">
+                        <li>IT Policy: Please review the <a href="https://hillvalleyhc.sharepoint.com/:b:/s/HumanResources/EbHOA2tZOIpHg5u9FkavqY0BHLVOTitdB8jMhdu_C5WBMw?e=iSi2J2" target="_blank" class="clickable-link">IT Support Policy</a>.</li>
+                        <li>For additional equipment, reach out to your manager.</li>
+                    </ul>
+                     
+                </div>
+            </div>
+
+            <!-- SLIDE 9: Email Etiquette & Signatures -->
+            <div id="slide-9" class="slide">
+                <div class="slide-content">
+                    <h2>8. Email Etiquette & Signatures</h2>
+                    <h3 class="text-indigo-600">Etiquette Essentials</h3>
+                    <ul class="bullet-list list-none">
+                        <li>Review the <a href="https://hillvalleyhc.sharepoint.com/:u:/s/HillValleyHub/EUqhTnk4S99MoGs7sF3F2_YB47J8BWHL5tD56qk8gZf9nQ?e=4XC51P" target="_blank" class="clickable-link">Email Retention Policy</a>.</li>
+                        <li>Use <strong>accurate and informative subject lines</strong>.</li>
+                        <li>Avoid <strong>“Reply All”</strong> unless truly needed.</li>
+                        <li>Respond in a timely manner during your working hours.</li>
+                    </ul>
+                    
+                    <div class="mt-8 p-4 border border-indigo-200 rounded-lg bg-indigo-50">
+                        <h3 class="mt-0 text-indigo-600 border-b pb-2">Drafting Assistant ✨</h3>
+                        <p class="text-sm text-gray-700 mb-3">Turn your rough notes into a professional email draft.</p>
+                        <button id="open-drafting-modal" class="nav-button bg-purple-500 hover:bg-purple-600 text-sm py-2 px-4 inline-block transition-all">Start Drafting</button>
+                    </div>
+
+                    <h3 class="text-indigo-600">Email Signatures (Auto-Generated)</h3>
+                    <p class="text-sm">Signatures are automatically generated. <strong>Do not alter or delete</strong> them.</p>
+                    <p class="text-sm mt-2">To change your default phone number (currently mobile), contact IT at <a href="mailto:Support@DigaCore.com" class="clickable-link">Support@DigaCore.com</a>.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: Expenses and Travel (Overview) -->
+            <div id="slide-10" class="slide">
+                <div class="slide-content">
+                    <h2>9. Expenses and Travel (Part 1)</h2>
+                    <p class="mb-4">We use <span class="font-bold text-indigo-600">Ramp</span> for all expense management. Review the <a href="#" onclick="alert('Simulating opening Ramp Policies and company handbook');" class="clickable-link">Ramp Policies and company handbook</a>.</p>
+                    
+                    <h3 class="text-indigo-600">Key Policies</h3>
+                    <ul class="bullet-list list-none">
+                        <li><strong>Per Diem:</strong> Up to <strong>$60 per day</strong> for meals and entertainment while traveling (itemized receipts required).</li>
+                        <li><strong>Gratuities:</strong> Reimbursable at 15–20% (meals) and 10% (taxi/rideshare).</li>
+                        <li><strong>Mileage & Tolls:</strong> Business mileage reimbursed per policy; <strong>commuting miles are NOT reimbursable</strong>.</li>
+                        <li><strong>Phone Reimbursement:</strong> <strong>$50 monthly</strong> via Ramp.</li>
+                    </ul>
+                    
+                </div>
+            </div>
+
+            <!-- SLIDE 11: Expenses and Travel (Booking) -->
+            <div id="slide-11" class="slide">
+                <div class="slide-content">
+                    <h2>9. Expenses and Travel (Part 2)</h2>
+                    <h3 class="text-indigo-600">Travel Booking & Payment</h3>
+                    <ul class="bullet-list list-none">
+                        <li><strong>Booking Tool:</strong> All flights, hotels, and rental cars must be booked through <strong>Concur (SAP)</strong>.</li>
+                        <li><strong>Booking Fee:</strong> $11.00 fee per trip (no receipt needed—allocate to the facility).</li>
+                        <li><strong>Payment:</strong> All expenses must be charged to your <strong>Ramp Card</strong>.</li>
+                        <li><strong>Reconciliation:</strong> Expenses must be reconciled through the <strong>Ramp App</strong> (receipts required, except the Concur fee).</li>
+                    </ul>
+                    <h3 class="text-red-600">Prohibited Expenses (Examples)</h3>
+                    <ul class="bullet-list list-none text-red-700 text-sm">
+                        <li>Upgrades (airline, hotel, rental car), Personal items/snacks.</li>
+                        <li>Health club memberships, Spa services.</li>
+                        <li>Traffic fines, parking violations.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 12: Social Media (Section 10) -->
+            <div id="slide-12" class="slide">
+                <div class="slide-content">
+                    <h2>10. Social Media</h2>
+                    <p class="mb-4">We use <span class="font-bold text-indigo-600">Birdeye</span> to manage our online reputation and social presence effectively.</p>
+                    
+                    <h3 class="text-indigo-600">Benefits of Consistent Posting</h3>
+                    <ul class="bullet-list list-none">
+                        <li>Community Engagement (Keeps families connected).</li>
+                        <li>Revenue Growth (Attracts new residents).</li>
+                        <li>Recruitment Support (Highlights positive culture).</li>
+                    </ul>
+                    <p class="bg-yellow-100 p-3 rounded-lg mt-4 text-sm font-semibold text-yellow-800">
+                        🚨 <strong>MANDATORY:</strong> All pictures of residents or employees <strong>MUST</strong> have a <a href="#" onclick="alert('Simulating opening Media release form details');" class="clickable-link">media release form signed</a> prior to posting on Birdeye.
+                    </p>
+                    
+                </div>
+            </div>
+
+            <!-- SLIDE 13: Visiting a Facility (Section 11) -->
+            <div id="slide-13" class="slide">
+                <div class="slide-content">
+                    <h2>11. Visiting a Facility</h2>
+                    <h3 class="text-indigo-600">Professional Presence</h3>
+                    <ul class="bullet-list list-none">
+                        <li>Remember you are a <strong>guest</strong>; maintain professionalism and respect.</li>
+                        <li><strong>Check-In/Check-Out:</strong> Report to facility leadership upon arrival and departure.</li>
+                        <li><strong>Flexibility:</strong> Adapt respectfully to each facility's processes and norms.</li>
+                    </ul>
+                    
+                </div>
+            </div>
+
+            <!-- SLIDE 14: Safety & Compliance (Section 12) -->
+            <div id="slide-14" class="slide">
+                <div class="slide-content">
+                    <h2>12. Safety & Compliance</h2>
+                    <p class="mb-4">Ask local leadership about <strong>site-specific practices</strong> before walking the building.</p>
+                    
+                    <h3 class="text-indigo-600">Infection Control</h3>
+                    <ul class="bullet-list list-none text-sm">
+                        <li><strong>Dress Code:</strong> Professional attire; <strong>avoid open-toed shoes</strong> in care areas.</li>
+                        <li><strong>Hygiene:</strong> Always wash/sanitize hands when entering/exiting/moving between areas.</li>
+                        <li><strong>PPE:</strong> Follow posted signage and ask leadership about current <strong>PPE</strong> expectations.</li>
+                    </ul>
+
+                    <h3 class="text-indigo-600">Reporting Concerns</h3>
+                    <ul class="bullet-list list-none text-sm">
+                        <li>Report compliance/safety concerns to the <strong>facility leadership on-site</strong>.</li>
+                        <li>Escalate significant or unresolved concerns to your <strong>immediate supervisor or HR</strong>.</li>
+                    </ul>
+                    
+                </div>
+            </div>
+
+            <!-- SLIDE 15: HIPAA (Section 13) -->
+            <div id="slide-15" class="slide">
+                <div class="slide-content">
+                    <h2>13. HIPAA: Protecting Privacy</h2>
+                    <p class="text-lg font-semibold text-red-700 mb-4">HIPAA applies to everyone—including visitors. Protect resident information!</p>
+                    
+                    <h3 class="text-indigo-600">Core Directives</h3>
+                    <ul class="bullet-list list-none">
+                        <li><strong>Never share or discuss resident information</strong> in public areas.</li>
+                        <li>Do <strong>not take photos or videos</strong> inside the facility unless explicitly authorized.</li>
+                        <li><strong>Access only the information necessary for your role</strong>.</li>
+                    </ul>
+
+                    <div id="hipaa-quiz-container" class="mt-6 p-4 border border-indigo-200 rounded-lg bg-indigo-50">
+                        <h3 class="mt-0 text-indigo-600 border-b pb-2">HIPAA Do's and Don'ts Quiz</h3>
+                        <p id="hipaa-question" class="mb-3 font-semibold text-gray-800"></p>
+                        <div id="hipaa-options" class="flex space-x-4">
+                            <button class="quiz-option bg-white w-1/2" data-answer="true">TRUE (DO)</button>
+                            <button class="quiz-option bg-white w-1/2" data-answer="false">FALSE (DON'T)</button>
+                        </div>
+                        <p id="hipaa-feedback" class="quiz-feedback-text"></p>
+                        <button id="hipaa-next-btn" class="nav-button bg-indigo-600 hover:bg-indigo-700 text-sm py-2 px-4 mt-3 hidden">Next Question</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 16: End Slide -->
+            <div id="slide-16" class="slide">
+                <div class="slide-content text-center pt-20">
+                    <h1 class="text-4xl font-extrabold text-indigo-700 mb-4">You're All Set!</h1>
+                    <p class="text-xl text-gray-600 mb-8">Ready to move on to your next onboarding steps.</p>
+                    <a href="#slide-0" class="nav-button inline-block px-8 py-3 bg-green-600 hover:bg-green-700" onclick="currentSlideIndex = 0; showSlide(0, false); return false;">Review Slideshow</a>
+                     
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Controls (Moved to correct position inside presentation-container) -->
+        <div class="nav-controls-footer">
+            <button id="prev-btn" class="nav-button flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                Previous
+            </button>
+            <span id="slide-counter" class="text-gray-500 text-sm flex items-center">1 / 17</span>
+            <button id="next-btn" class="nav-button flex items-center">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Gemini AI Q&A Modal -->
+    <div id="ai-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2 class="text-xl font-bold text-indigo-700 mb-4 border-b pb-2">AI Onboarding Assistant ✨</h2>
+        <p class="text-sm text-gray-600 mb-4">Ask any question about the New Hire Booklet, policies, or company structure. The assistant uses the document's content for grounded answers.</p>
+        
+        <input type="text" id="user-query" placeholder="e.g., What are the rules for travel booking?" 
+               class="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:ring-indigo-500 focus:border-indigo-500">
+        
+        <button id="ask-ai-btn" class="nav-button w-full mb-4 bg-indigo-600 hover:bg-indigo-700">Get Answer</button>
+        
+        <div id="ai-response-area" class="min-h-20 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <p id="ai-response-text" class="text-sm text-gray-700">Your answer will appear here...</p>
+            <div id="ai-loader" class="loader hidden mt-4"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Gemini Email Drafting Modal -->
+    <div id="drafting-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn drafting-close">&times;</span>
+        <h2 class="text-xl font-bold text-purple-700 mb-4 border-b pb-2">Email Drafting Assistant ✨</h2>
+        <p class="text-sm text-gray-600 mb-4">Provide notes on what you need to communicate (recipient, topic, key facts). I'll draft a professional email compliant with our etiquette rules.</p>
+        
+        <textarea id="drafting-query" placeholder="e.g., Email to John in HR. Need to tell him my payroll deposit was wrong. Key facts: amount was $150 short, issue was from last Friday's deposit." 
+               rows="4" class="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:ring-purple-500 focus:border-purple-500"></textarea>
+        
+        <button id="draft-email-btn" class="nav-button w-full mb-4 bg-purple-600 hover:bg-purple-700">Generate Draft</button>
+        
+        <div id="drafting-response-area" class="min-h-40 p-3 bg-gray-50 rounded-lg border border-gray-200 whitespace-pre-wrap">
+            <p id="drafting-response-text" class="text-sm text-gray-700">Your professional email draft will appear here...</p>
+            <div id="drafting-loader" class="loader hidden mt-4"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const slidesWrapper = document.getElementById('slides-wrapper');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const tocNav = document.getElementById('toc');
+        let isAnimating = false;
+        
+        // --- Gemini API Elements (Q&A) ---
+        const aiModal = document.getElementById('ai-modal');
+        const openAiModalBtn = document.getElementById('open-ai-modal');
+        const closeBtn = document.querySelector('.close-btn');
+        const userQueryInput = document.getElementById('user-query');
+        const askAiBtn = document.getElementById('ask-ai-btn');
+        const aiResponseText = document.getElementById('ai-response-text');
+        const aiLoader = document.getElementById('ai-loader');
+        
+        // --- Gemini API Elements (Drafting) ---
+        const draftingModal = document.getElementById('drafting-modal');
+        const openDraftingModalBtn = document.getElementById('open-drafting-modal');
+        const draftingCloseBtn = document.querySelector('.drafting-close');
+        const draftingQueryInput = document.getElementById('drafting-query');
+        const draftEmailBtn = document.getElementById('draft-email-btn');
+        const draftingResponseText = document.getElementById('drafting-response-text');
+        const draftingLoader = document.getElementById('drafting-loader');
+        
+        const apiKey = ""; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // --- Core Values Scenario Elements ---
+        const generateScenarioBtn = document.getElementById('generate-scenario-btn');
+        const scenarioText = document.getElementById('scenario-text');
+        const scenarioLoader = document.getElementById('scenario-loader');
+        const answerArea = document.getElementById('answer-area');
+        const revealAnswerBtn = document.getElementById('reveal-answer-btn');
+        const answerText = document.getElementById('answer-text');
+
+        // --- Systems Matching Game Elements ---
+        const matchGameGrid = document.getElementById('match-grid');
+        const matchFeedback = document.getElementById('match-feedback');
+        const matchProgress = document.getElementById('match-progress');
+        let selectedSource = null;
+        let selectedTarget = null;
+        let matchedPairs = 0;
+
+        // Data for the Matching Game on Slide 6
+        const MATCHING_DATA = [
+            { id: 'm1', source: 'SharePoint', target: 'All News/Information', link: 'https://www.sharepoint.com' },
+            { id: 'm2', source: 'Empeon', target: 'Payroll & HRIS', link: 'https://www.empeon.com' },
+            { id: 'm3', source: 'Relias', target: 'Training', link: 'https://pcchillvalley.training.reliaslearning.com/' },
+            { id: 'm4', source: 'TELS', target: 'Maintenance System', link: 'https://www.tels.net/TELSLogin/' },
+        ];
+
+
+        // --- HIPAA Quiz Data ---
+        let hipaaQuizData = [
+            { question: "Is it okay to discuss a resident’s chart with a non-clinical colleague in the break room?", answer: false, explanation: "DON'T: Resident information is confidential and should never be discussed in public areas like break rooms or hallways, even if with another employee." },
+            { question: "Can you take a photo of a resident’s medication chart if you delete it immediately after reviewing?", answer: false, explanation: "DON'T: Taking photos of protected health information (PHI) on a personal device is a serious HIPAA violation and is strictly prohibited." },
+            { question: "Is it permitted to securely dispose of a resident's printed lab results in a shred bin?", answer: true, explanation: "DO: Any printed documents containing resident information MUST be disposed of securely, typically in a designated shred bin." },
+            { question: "Should you check the HIPAA policy when visiting a facility if you only access non-resident financial data?", answer: true, explanation: "DO: HIPAA applies to everyone, and you should only access information necessary for your role. Compliance is mandatory for all team members." }
+        ];
+        let currentHipaaQuestionIndex = 0;
+        const hipaaQuestionEl = document.getElementById('hipaa-question');
+        const hipaaOptionsEl = document.getElementById('hipaa-options');
+        const hipaaFeedbackEl = document.getElementById('hipaa-feedback');
+        const hipaaNextBtn = document.getElementById('hipaa-next-btn');
+
+
+        // --- Full document content for LLM context (from previous step) ---
+        const fullDocumentContext = `
+            NEW HIRE BOOKLET CONTEXT: 
+            Core Values: Humbly Confident, Authentic, Solution Focused, Driven to Excellence, Ownership.
+            Organizational Structure: Clinical (Health Informatics, QAPI, Case Management, Infection Control, Clinical Reimbursement, etc.), Operations (HR, Talent Acquisition, Facility Maintenance, Life Enrichment, etc.), Finance (Payroll, Business Office, Procurement, Planning, and Analytics).
+            Culture: Collect feedback via New Hire, Exit, Pulse and Engagement Surveys. Provides leadership development programs. Support includes Kudos Cards, monthly events, Print and Post Boards.
+            Policies & Training: Required training provided by manager. Expense policy must be reviewed if credit card received. All resources housed in intranet.
+            Systems: SharePoint (News/Info), Empeon (Payroll/HRIS), Relias (Training), TELS (Maintenance), Outlook (Email), Microsoft Teams (Meetings/Messaging), WhatsApp (Quick messaging), PCC (Role-dependent).
+            IT Support (Digacore): Email: support@digacore.com, Phone: 732-646-5725. IT Policy: https://hillvalleyhc.sharepoint.com/:b:/s/HumanResources/EbHOA2tZOIpHg5u9FkavqY0BHLVOTitdB8jMhdu_C5WBMw?e=iSi2J2.
+            Email: Managed by Email Retention Policy (https://hillvalleyhc.sharepoint.com/:u:/s/HillValleyHub/EUqhTnk4S99MoGs7sF3F2_YB47J8BWHL5tD56qk8gZf9nQ?e=4XC51P). Signature is auto-generated; do not alter. To change phone number (default is mobile), contact Support@DigaCore.com. Etiquette: Keep tone courteous and professional, use accurate and informative subject lines, avoid Reply All unless truly needed, respond timely, proofread.
+            Expenses (Ramp): Must follow Ramp Policies. Per Diem: Up to $60/day for meals (itemized receipts required). Gratuities 15–20% meals, 10% taxi/rideshare. Mileage: Business reimbursed; commuting is NOT. Phone Reimbursement: $50 monthly via Ramp. Travel Booking: MUST use Concur (SAP). $11.00 booking fee per trip (allocate to facility, no receipt needed). Payment via Ramp Card. Prohibited: Upgrades, personal items (snacks, toiletries), memberships, fines, childcare, unused reservations.
+            Social Media (Birdeye): Used for Community Engagement, Revenue Growth, Recruitment Support. Mandatory: All pictures of residents/employees MUST have a media release form signed prior to posting on Birdeye.
+            Visiting a Facility: Guest role. Check in/out with leadership. Be flexible.
+            Safety & Compliance: Ask local leadership for site-specific practices. Infection Control: Professional attire (no open-toed shoes in care areas). Wash/sanitize hands frequently. Follow PPE rules. Emergency Preparedness: Know location of Emergency Preparedness Binder and building codes (e.g., Code Red). Reporting: Report concerns to facility leadership first, escalate to immediate supervisor or HR if unresolved.
+            HIPAA: Never share resident info in public areas. Do not take photos/videos with residents unless authorized. Access only necessary info. Dispose of printed documents securely (shred bin).
+        `;
+
+
+        // --- Slide Data for TOC and Titles ---
+        const slideData = [
+            { id: 'slide-0', title: 'Welcome to the Team' },
+            { id: 'slide-1', title: '1. Core Values' },
+            { id: 'slide-2', title: '2. Organizational Structure' },
+            { id: 'slide-3', title: '3. Culture & Employee Experience' },
+            { id: 'slide-4', title: '4. Policies & Training Essentials' },
+            { id: 'slide-5', title: '5. Systems & Tools Overview' },
+            { id: 'slide-6', title: '5. Systems Knowledge Check' },
+            { id: 'slide-7', primary: true, title: '6. Onboarding & Development' },
+            { id: 'slide-8', title: '7. IT Support (Digacore)' },
+            { id: 'slide-9', title: '8. Email Etiquette & Signatures' },
+            { id: 'slide-10', title: '9. Expenses and Travel (Part 1)' },
+            { id: 'slide-11', title: '9. Expenses and Travel (Part 2)' },
+            { id: 'slide-12', title: '10. Social Media' },
+            { id: 'slide-13', title: '11. Visiting a Facility' },
+            { id: 'slide-14', title: '12. Safety & Compliance' },
+            { id: 'slide-15', title: '13. HIPAA: Protecting Privacy' },
+            { id: 'slide-16', title: 'Thank You' }
+        ];
+
+        // --- Core Slideshow Functions ---
+
+        function updateTOC() {
+            tocNav.innerHTML = ''; 
+            slideData.forEach((data, index) => {
+                const link = document.createElement('a');
+                link.href = `#${data.id}`;
+                link.textContent = data.title;
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    showSlide(index, false); 
+                };
+                tocNav.appendChild(link);
+            });
+        }
+
+        function updateControls(index) {
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === slides.length - 1;
+            slideCounter.textContent = `${index + 1} / ${slides.length}`;
+
+            const tocLinks = tocNav.querySelectorAll('a');
+            tocLinks.forEach((link, idx) => {
+                link.classList.remove('toc-active');
+                if (idx === index) {
+                    link.classList.add('toc-active');
+                }
+            });
+        }
+
+        function showSlide(index, useAnimation = true) {
+            if (isAnimating) return;
+            
+            const oldIndex = currentSlideIndex;
+            
+            index = Math.max(0, Math.min(slides.length - 1, index));
+            if (index === oldIndex) return;
+
+            const direction = index > oldIndex ? 'next' : 'prev';
+
+            if (!useAnimation) {
+                 slides.forEach((slide, idx) => {
+                    slide.classList.remove('flipping');
+                    if (idx === index) {
+                        slide.classList.add('active-slide');
+                        slide.classList.remove('flipped-next');
+                        slide.style.zIndex = 5;
+                    } else if (idx < index) {
+                        slide.classList.remove('active-slide');
+                        slide.classList.add('flipped-next');
+                        slide.style.zIndex = 1;
+                    } else {
+                        slide.classList.remove('active-slide', 'flipped-next');
+                        slide.style.zIndex = 1;
+                    }
+                });
+                currentSlideIndex = index;
+                updateControls(currentSlideIndex);
+                slides[index].scrollTop = 0;
+                return;
+            }
+
+            // --- FLIP ANIMATION (NEXT/PREV BUTTON) ---
+            isAnimating = true;
+            
+            const currentSlide = slides[oldIndex];
+            const targetSlide = slides[index];
+
+            if (direction === 'next') {
+                currentSlide.style.zIndex = 10;
+                targetSlide.style.zIndex = 5;
+                targetSlide.classList.add('active-slide'); 
+                currentSlide.classList.add('flipping');
+                
+                setTimeout(() => {
+                    currentSlide.classList.remove('flipping', 'active-slide');
+                    currentSlide.classList.add('flipped-next');
+                    currentSlideIndex = index;
+                    isAnimating = false;
+                    updateControls(currentSlideIndex);
+                }, 1000);
+                
+            } else if (direction === 'prev') {
+                targetSlide.style.zIndex = 10; 
+                targetSlide.classList.remove('flipped-next');
+                
+                setTimeout(() => {
+                    targetSlide.classList.add('active-slide');
+                    currentSlide.classList.remove('active-slide'); 
+                    targetSlide.style.zIndex = 5;
+                    
+                    currentSlideIndex = index;
+                    isAnimating = false;
+                    updateControls(currentSlideIndex);
+                }, 1000); 
+            }
+            
+            targetSlide.scrollTop = 0;
+        }
+
+
+        function nextSlide() {
+            if (!isAnimating) {
+                showSlide(currentSlideIndex + 1, true);
+            }
+        }
+
+        function prevSlide() {
+            if (!isAnimating) {
+                showSlide(currentSlideIndex - 1, true);
+            }
+        }
+        
+        // --- Gemini LLM Functions ---
+        async function fetchGeminiResponse(payload) {
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                } catch (error) {
+                    attempts++;
+                    console.error(`Attempt ${attempts} failed:`, error);
+                    if (attempts >= maxAttempts) {
+                        throw new Error('A network error occurred. Please check your connection and try again.');
+                    }
+                    const delay = Math.pow(2, attempts) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        
+        async function generateAIResponse(query) {
+            aiResponseText.textContent = '';
+            aiLoader.classList.remove('hidden');
+            askAiBtn.disabled = true;
+
+            const systemPrompt = "You are the official New Hire Onboarding Assistant. Your task is to answer questions strictly based on the provided NEW HIRE BOOKLET CONTEXT. Do not use external knowledge. Be professional, concise, and helpful. If a question is outside the scope of the context, respond only with: 'I can only answer questions based on the New Hire Booklet. Please try a different query.'";
+            
+            const userPrompt = `Based ONLY on the context provided, answer the following question: ${query}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt + fullDocumentContext }] },
+                config: { temperature: 0.2 }
+            };
+            
+            try {
+                const text = await fetchGeminiResponse(payload);
+                aiResponseText.textContent = text || "Sorry, I couldn't process that request.";
+            } catch (error) {
+                aiResponseText.textContent = error.message;
+            } finally {
+                aiLoader.classList.add('hidden');
+                askAiBtn.disabled = false;
+            }
+        }
+
+        async function generateEmailDraft(notes) {
+            draftingResponseText.textContent = '';
+            draftingLoader.classList.remove('hidden');
+            draftEmailBtn.disabled = true;
+
+            const systemPrompt = "You are a professional, compliance-aware corporate communications expert. Your task is to take the user's rough notes and turn them into a formal, courteous, and professional email draft. Ensure the subject line is accurate and informative. Start the response with a professional greeting (e.g., 'Dear [Recipient Name],') and end with a courteous closing (e.g., 'Thank you,'). Do not include the user's name or title in the draft (use placeholders like '[Your Name]'). The tone must adhere strictly to corporate email etiquette: courteous, professional, and clear. Do not provide commentary or extra context.";
+            
+            const userPrompt = `Draft an email based on these notes: ${notes}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt + fullDocumentContext }] },
+                config: { temperature: 0.5 }
+            };
+
+            try {
+                const text = await fetchGeminiResponse(payload);
+                draftingResponseText.textContent = text || "Sorry, I couldn't generate that draft. Please try simplifying your notes.";
+            } catch (error) {
+                draftingResponseText.textContent = error.message;
+            } finally {
+                draftingLoader.classList.add('hidden');
+                draftEmailBtn.disabled = false;
+            }
+        }
+
+        let currentAnswer = "";
+        
+        async function generateCoreValueScenario() {
+            scenarioText.textContent = "Generating scenario...";
+            answerArea.classList.add('hidden');
+            scenarioLoader.classList.remove('hidden');
+            generateScenarioBtn.disabled = true;
+            revealAnswerBtn.classList.add('hidden');
+            answerText.classList.add('hidden');
+            
+            const coreValues = ["Humbly Confident", "Authentic", "Solution Focused", "Driven to Excellence", "Ownership"];
+
+            const systemPrompt = "You are a training module developer. Your task is to generate a single, realistic workplace scenario that takes place in a Skilled Nursing Care Facility, Assisted Living Facility, or LTACH. The scenario must perfectly illustrate ONE of the following core values: Humbly Confident, Authentic, Solution Focused, Driven to Excellence, Ownership. The output MUST be a JSON object with exactly two keys: 'scenario' and 'answer'. The 'scenario' value should be a brief paragraph (max 3 sentences) describing the situation. The 'answer' value MUST be one of the five core values and nothing else.";
+            
+            const userPrompt = `Generate a new scenario that illustrates one of these values: ${coreValues.join(', ')}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                config: { 
+                    temperature: 0.8,
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "scenario": { "type": "STRING" },
+                            "answer": { "type": "STRING" }
+                        },
+                        required: ["scenario", "answer"]
+                    }
+                }
+            };
+
+            try {
+                const jsonText = await fetchGeminiResponse(payload);
+                
+                // FIX: Remove markdown code fences before parsing
+                const cleanedJsonText = jsonText.replace(/```json\s*|```/g, '').trim(); 
+                
+                const data = JSON.parse(cleanedJsonText);
+                
+                scenarioText.textContent = data.scenario;
+                currentAnswer = data.answer;
+                answerText.textContent = `Core Value: ${currentAnswer}`;
+                
+                answerArea.classList.remove('hidden');
+                revealAnswerBtn.classList.remove('hidden');
+                
+            } catch (error) {
+                scenarioText.textContent = "Failed to generate scenario. Please try again.";
+                console.error("Scenario generation error:", error);
+            } finally {
+                scenarioLoader.classList.add('hidden');
+                generateScenarioBtn.disabled = false;
+            }
+        }
+
+        // --- Systems Matching Game Logic ---
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function createMatchItem(id, type, value, link) {
+            const item = document.createElement('div');
+            item.className = `match-item text-center cursor-pointer my-2 shadow-md ${type}-item transition-all`;
+            item.dataset.id = id;
+            item.dataset.type = type;
+            item.innerHTML = value;
+            
+            if (type === 'source') {
+                item.classList.add('bg-blue-100', 'text-blue-800');
+            } else {
+                item.classList.add('bg-yellow-100', 'text-yellow-800');
+            }
+
+            item.onclick = () => handleMatchClick(item, link);
+            return item;
+        }
+
+        function renderMatchingGame() {
+            matchGameGrid.innerHTML = '';
+            
+            const sources = MATCHING_DATA.map(item => ({ id: item.id, value: item.source, link: item.link }));
+            const targets = MATCHING_DATA.map(item => ({ id: item.id, value: item.target }));
+
+            shuffleArray(sources);
+            shuffleArray(targets);
+
+            const allItems = [];
+            for (let i = 0; i < sources.length; i++) {
+                allItems.push(createMatchItem(sources[i].id, 'source', sources[i].value, sources[i].link));
+                allItems.push(createMatchItem(targets[i].id, 'target', targets[i].value));
+            }
+            
+            shuffleArray(allItems); // Mix them all up in the final grid
+
+            allItems.forEach(item => matchGameGrid.appendChild(item));
+            updateMatchProgress();
+        }
+
+        function handleMatchClick(clickedItem, link) {
+            if (clickedItem.classList.contains('matched')) return;
+
+            const isSource = clickedItem.dataset.type === 'source';
+            
+            // Clear previous selection of the same type
+            if (isSource && selectedSource) selectedSource.classList.remove('selected');
+            if (!isSource && selectedTarget) selectedTarget.classList.remove('selected');
+
+            // Set new selection
+            clickedItem.classList.add('selected');
+            if (isSource) {
+                selectedSource = clickedItem;
+                selectedSource.dataset.link = link; 
+            } else {
+                selectedTarget = clickedItem;
+            }
+
+            // Check for a match
+            if (selectedSource && selectedTarget) {
+                if (selectedSource.dataset.id === selectedTarget.dataset.id) {
+                    // Match found!
+                    matchFeedback.textContent = "Correct! Match Found.";
+                    selectedSource.classList.add('matched');
+                    selectedTarget.classList.add('matched');
+                    selectedSource.classList.remove('selected');
+                    selectedTarget.classList.remove('selected');
+                    
+                    // Display Link
+                    matchFeedback.innerHTML += `<br><span class="text-sm font-normal text-indigo-700">Link: <a href="${selectedSource.dataset.link}" target="_blank" class="clickable-link font-semibold">${selectedSource.dataset.link}</a></span>`;
+
+                    selectedSource = null;
+                    selectedTarget = null;
+                    matchedPairs++;
+                    updateMatchProgress();
+                    if (matchedPairs === MATCHING_DATA.length) {
+                        matchFeedback.textContent = "Congratulations! You matched all the systems!";
+                    }
+
+                } else {
+                    // Incorrect match
+                    matchFeedback.textContent = "Incorrect match. Try again!";
+                    selectedSource.classList.add('incorrect');
+                    selectedTarget.classList.add('incorrect');
+                    
+                    setTimeout(() => {
+                        selectedSource.classList.remove('selected', 'incorrect');
+                        selectedTarget.classList.remove('selected', 'incorrect');
+                        selectedSource = null;
+                        selectedTarget = null;
+                        matchFeedback.textContent = "Test your knowledge! Match the system/tool with its correct purpose."; // Clear feedback after shake
+                    }, 800);
+                }
+            }
+        }
+        
+        function updateMatchProgress() {
+             matchProgress.textContent = `Matched: ${matchedPairs} / ${MATCHING_DATA.length}`;
+        }
+        
+        // --- HIPAA Quiz Logic ---
+
+        function shuffleHipaaQuiz() {
+            shuffleArray(hipaaQuizData);
+            currentHipaaQuestionIndex = 0;
+            displayHipaaQuestion();
+        }
+
+        function displayHipaaQuestion() {
+            hipaaFeedbackEl.textContent = '';
+            hipaaNextBtn.classList.add('hidden');
+            hipaaOptionsEl.classList.remove('pointer-events-none');
+            
+            hipaaOptionsEl.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.classList.remove('quiz-correct', 'quiz-incorrect');
+                btn.disabled = false;
+            });
+
+            if (currentHipaaQuestionIndex < hipaaQuizData.length) {
+                const q = hipaaQuizData[currentHipaaQuestionIndex];
+                hipaaQuestionEl.textContent = `Question ${currentHipaaQuestionIndex + 1}: ${q.question}`;
+            } else {
+                hipaaQuestionEl.textContent = "Quiz Complete! Excellent work on your HIPAA knowledge.";
+                hipaaOptionsEl.innerHTML = '';
+            }
+        }
+
+        function handleHipaaAnswer(selectedAnswer) {
+            const q = hipaaQuizData[currentHipaaQuestionIndex];
+            const isCorrect = (selectedAnswer === "true") === q.answer;
+            
+            hipaaOptionsEl.classList.add('pointer-events-none'); // Disable buttons
+            hipaaNextBtn.classList.remove('hidden');
+
+            hipaaOptionsEl.querySelectorAll('.quiz-option').forEach(btn => {
+                const btnAnswer = btn.getAttribute('data-answer');
+                if ((btnAnswer === "true") === q.answer) {
+                    btn.classList.add('quiz-correct');
+                } else if (btnAnswer === selectedAnswer) {
+                    btn.classList.add('quiz-incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                hipaaFeedbackEl.innerHTML = `<span class="text-green-700 font-bold">Correct!</span> ${q.explanation}`;
+            } else {
+                hipaaFeedbackEl.innerHTML = `<span class="text-red-700 font-bold">Incorrect.</span> ${q.explanation}`;
+            }
+        }
+        
+        function nextHipaaQuestion() {
+            currentHipaaQuestionIndex++;
+            displayHipaaQuestion();
+        }
+
+
+        // --- Event Listeners and Initialization ---
+
+        window.onload = function() {
+            updateTOC();
+            showSlide(currentSlideIndex, false); 
+            renderMatchingGame(); // Initialize the matching game
+            shuffleHipaaQuiz(); // Initialize the HIPAA quiz
+            
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+
+            // Keyboard navigation (Arrow Keys)
+            document.addEventListener('keydown', (e) => {
+                if (isAnimating) return;
+                if (e.key === 'ArrowRight') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+            
+            // Re-apply event listeners for buttons that might be hidden initially
+            if(document.getElementById('open-drafting-modal')) {
+                document.getElementById('open-drafting-modal').onclick = function() { draftingModal.style.display = "block"; };
+            }
+            if(document.getElementById('generate-scenario-btn')) {
+                 document.getElementById('generate-scenario-btn').onclick = generateCoreValueScenario;
+            }
+            
+            // Set up link actions for mailto and internal alerts
+            document.querySelectorAll('a[href^="mailto:"]').forEach(link => {
+                link.onclick = function(e) {
+                    // Mailto links work fine natively, no alert needed.
+                }
+            });
+            document.querySelectorAll('a[onclick^="alert"]').forEach(link => {
+                link.onclick = function(e) {
+                    e.preventDefault();
+                    // Keep existing simulation for placeholders
+                    const text = this.getAttribute('onclick').match(/Simulating opening (.*?)'/)[1];
+                    alert(`Simulating opening external link/policy for: ${text}`);
+                }
+            });
+
+            // --- Gemini Modal Logic (Q&A) ---
+            openAiModalBtn.onclick = function() {
+                aiModal.style.display = "block";
+            }
+            closeBtn.onclick = function() {
+                aiModal.style.display = "none";
+            }
+            
+            // --- Gemini Modal Logic (Drafting) ---
+            
+            draftingCloseBtn.onclick = function() {
+                draftingModal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == aiModal) {
+                    aiModal.style.display = "none";
+                }
+                if (event.target == draftingModal) {
+                    draftingModal.style.display = "none";
+                }
+            }
+
+            askAiBtn.onclick = function() {
+                const query = userQueryInput.value.trim();
+                if (query) {
+                    generateAIResponse(query);
+                } else {
+                    aiResponseText.textContent = "Please enter a question about the New Hire Booklet.";
+                }
+            }
+            
+            draftEmailBtn.onclick = function() {
+                const notes = draftingQueryInput.value.trim();
+                if (notes) {
+                    generateEmailDraft(notes);
+                } else {
+                    draftingResponseText.textContent = "Please enter notes to draft an email.";
+                }
+            }
+
+            // --- Core Value Scenario Logic ---
+            
+            revealAnswerBtn.onclick = function() {
+                answerText.classList.remove('hidden');
+                revealAnswerBtn.disabled = true; // Prevent multiple clicks on reveal
+            };
+            
+            // Set initial state for scenario
+            scenarioText.textContent = "Click 'Generate Scenario' below to test your knowledge!";
+            revealAnswerBtn.disabled = false;
+            
+            // --- HIPAA Quiz Event Listeners ---
+            hipaaOptionsEl.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    handleHipaaAnswer(this.getAttribute('data-answer'));
+                });
+            });
+            hipaaNextBtn.addEventListener('click', nextHipaaQuestion);
+        };
+    </script>
+</body>
+</html>
